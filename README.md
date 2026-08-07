@@ -277,3 +277,19 @@ it is the half you can actually study.
 
 *Start with `php check.php`, then Module 0. Module 0 is two short lessons and no code, and it is
 the most important thing in the course.*
+
+---
+
+## Licence
+
+[MIT](LICENSE) — the whole repository, the writing as well as the code.
+
+Use it, change it, teach from it, translate it, sell it. Build your own paid
+course on top of it if you like. The only obligation is to keep the copyright
+notice.
+
+The point of a course is that people take what they learn and use it, and a
+licence that made you think twice before copying an example into your
+employer's codebase would be working against the thing it was written for. The
+same goes for the writing: if somebody can teach this better, or to an audience
+I will never reach, that is more people learning it.

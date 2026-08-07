@@ -188,6 +188,15 @@ $rules = [
     'Ceremony must be paid for',
 ];
 
+/**
+ * The two repositories. Absolute, because most readers cloned one of them and a
+ * relative path to a sibling folder is a dead link for every one of those.
+ */
+$repoUrl      = 'https://github.com/monatemedia/php8.5-domain-architecture';
+$prequelUrl   = 'https://github.com/monatemedia/php8.5-oop-mastery-course';
+$prequelDir   = dirname(__DIR__) . '/php8.5-oop-mastery-course';
+$prequelReady = is_dir($prequelDir);
+
 $e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 ?>
 <!DOCTYPE html>
@@ -452,7 +461,7 @@ $e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     <h1>Modelling business reality,<br><em>and knowing when not to</em></h1>
 
     <p class="lede">
-      The previous course was about <em>how to wire components</em>. This one is about
+      <a href="<?= $prequelUrl ?>">The previous course</a> was about <em>how to wire components</em>. This one is about
       <em>what the components should be</em> — moving from loggers and mailers to a job card
       that knows the rules for cancelling itself, a price that cannot be negative, and a bill
       that refuses to be issued twice.
@@ -734,7 +743,11 @@ Throwable</b></pre>
     <a href="https://php-di.org/">PHP-DI</a> ·
     <a href="https://phpunit.de/">PHPUnit</a>
     <br>
-    Prerequisite: <em>PHP 8.5 OOP Mastery</em>, completed — not read.
+    <a href="<?= $repoUrl ?>">This course on GitHub</a> ·
+    Prerequisite: <a href="<?= $prequelUrl ?>">PHP 8.5 OOP Mastery</a><?= $prequelReady ? ' (you have it locally)' : '' ?>,
+    completed — not read ·
+    MIT licensed
+    <br>
     This page is informational only; the course runs entirely from the command line.
   </div>
 </footer>

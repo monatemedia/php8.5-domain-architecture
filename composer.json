@@ -2,7 +2,7 @@
     "name": "php85-domain-architecture/course",
     "description": "Advanced Domain Architecture & Tactical DDD — PHP 8.5. Dependencies are needed from Module 3 onwards; Modules 0-2 are plain PHP with no vendor directory.",
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
     "require": {
         "php": ">=8.5",
         "ext-pdo": "*",
