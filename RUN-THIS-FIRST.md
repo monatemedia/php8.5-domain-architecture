@@ -7,16 +7,16 @@
 
 ## The result
 
-Re-verified after each lesson lands. As of Lesson 3.1:
+Re-verified after each lesson lands. As of Lesson 3.4 — Modules 0 to 3 complete:
 
 | Check | Result |
 |-------|--------|
 | PHP version | 8.5.7 |
 | Language-feature probes | **10 / 10** — including `clone($obj, [...])`, static asymmetric visibility, `#[\NoDiscard]` |
-| Files parsing | **100 / 100** |
-| Reference solutions passing their own acceptance checks | **9 / 9** |
-| Earlier lesson specs still passing against the newest code | **9 / 9** |
-| Examples running to exit code 0 | **34 / 34** |
+| Files parsing | **132 / 132** |
+| Reference solutions passing their own acceptance checks | **12 / 12** |
+| Earlier lesson specs still passing against the newest code | **12 / 12** |
+| Examples running to exit code 0 | **40 / 40** |
 | `check.php` | stops correctly at Lesson 0.1 |
 
 No warnings. `composer install` has been run — Module 3 is the first that needs it, and

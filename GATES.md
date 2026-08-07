@@ -295,4 +295,101 @@ noticing that it was made in Lesson 2.3 rather than argued about in 2.1.
 
 ---
 
-*Gates for Modules 3 onwards are written as those modules are built.*
+# Gate 3 — After Module 3
+
+## Part 1 — Module 3
+
+**G3.1** The repository interface goes in the domain. The query service interface does not. Give the
+test that decides it, and apply it to both.
+
+**G3.2** Name the five things about a rich `JobCard` that block rebuilding one from a database row,
+and say which earlier lesson each came from.
+
+**G3.3** `JobCard::reconstitute()` records no events, and needs no flag to achieve that. Why?
+
+**G3.4** A contract test must not assert that `get()` returns the same instance, but must assert that
+lines come back in order. State the rule that produces both answers.
+
+## Part 2 — Carried forward from Modules 1 and 2
+
+**G3.5** `JobCardSummary` is anemic — public properties, no rules. Lesson 1.1 spent a lesson arguing
+against that shape. Reconcile them.
+
+**G3.6** Lesson 2.1 said the total is derived and never stored. Lesson 3.2's mapper stores no total
+either. Name the one circumstance in which both would be wrong, and say what the course already does
+about a version of it.
+
+---
+
+<details>
+<summary><strong>Gate 3 — answer key</strong> (open only after you have answered)</summary>
+
+**G3.1** *The test:* delete the framework and the database — does this still mean something to
+somebody who runs the business?
+
+`JobCards::awaitingAuthorisation()` survives. The service manager asks it every morning and would ask
+it with a paper diary. It is a domain concept, so the interface lives in `domain/workshop/` and every
+implementation lives outside it.
+
+`JobCardSummaryQuery::openByValueDescending()` does not. Its columns are whatever the screen shows
+this month and its sort order is somebody's preference; it changes when the screen changes. An
+interface that changes when a screen changes is not a domain interface, so the whole thing —
+read model, query, any interface over it — is infrastructure and the domain does not know it exists.
+
+**G3.2** Private constructor (1.2's value-object discipline, applied to an aggregate). `open()`
+records `JobCardOpened` (2.3). `LabourLine::create()` mints a `LineId` (2.1). Status transitions are
+guarded by I9 (2.1). `readonly` lines and private state (1.1).
+
+Each was argued for and each is still right. Together they mean the public API cannot express *"this
+object already exists"* — which is the mapping problem, and it has a name: reconstitution.
+
+**G3.3** Because `open()` records, and the **constructor** does not. `reconstitute()` builds through
+the constructor, so there is nothing to suppress.
+
+That was decided in Lesson 2.3, with the reason stated at the time — *"opening is a business event;
+loading is not"* — and 3.2 is where it pays off. Had the event been recorded in the constructor, the
+only way out would be a flag; and a flag on an aggregate saying "do not announce things right now" is
+the sort of thing that gets left on.
+
+**G3.4** **Assert what the interface promises; never how a class keeps the promise.**
+
+A caller may rely on `get()` returning an **equal** job card — same identity, status, total, and
+lines in the same order. A caller may not rely on the same PHP object, because nothing says so and a
+database physically cannot: rows come back and a new aggregate is built.
+
+Ordering is the reverse case. `lines()` returns a list in insertion order, which *is* part of the
+promise — and an array satisfies it by accident while a table needs a `position` column. That is
+exactly why it must be asserted: only one implementation gets it for free, and the failure arrives
+later, from an index.
+
+**G3.5** They are not in tension. Lesson 1.1 §7 named this case explicitly: a DTO whose only job is
+to be rendered has no invariants to protect, and putting behaviour on it is the opposite error.
+
+The distinction is whether anything is ever *decided* with the object. A `JobCard` is changed, saved
+and reasoned about, so its rules must be unavoidable. A `JobCardSummary` is built from a row, shown,
+and discarded — there is nothing to protect and nothing that could go wrong.
+
+The line is watchable rather than theoretical: the moment a read model grows a method that *decides*
+something — `canBeInvoiced()` is the classic — it has stopped being a read model, and the rule now
+lives in two places, one of which nobody regards as authoritative.
+
+**G3.6** Both would be wrong when **the calculation itself becomes historical** — a new tax
+treatment, a different rounding rule. A derived total then silently re-prices last year's invoices,
+and nothing fails. An invoice is a statement of what was charged, so that is a correctness failure
+rather than a performance one.
+
+What the course already does about a version of it: **`JobCardInvoiced` carries the total**, captured
+at the moment of billing. So the accounting record is a fact about a moment even though the
+aggregate's own total is a fact about now — and that compromise was made in Lesson 2.3, not argued
+about in 2.1.
+
+The remaining gap is a job card that is invoiced and then re-read for display before any calculation
+change; that is fine today and would need a stored `invoiced_total` the day it is not. Note the
+difference between storing a total *because reads are slow* — a cache, usually wrong — and storing
+one *because it is a different fact*.
+
+</details>
+
+---
+
+*Gates for Modules 4 onwards are written as those modules are built.*
