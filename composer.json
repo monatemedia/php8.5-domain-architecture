@@ -1,0 +1,36 @@
+{
+    "name": "php85-domain-architecture/course",
+    "description": "Advanced Domain Architecture & Tactical DDD — PHP 8.5. Dependencies are needed from Module 3 onwards; Modules 0-2 are plain PHP with no vendor directory.",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.5",
+        "ext-pdo": "*",
+        "ext-pdo_sqlite": "*",
+        "php-di/php-di": "^7.0",
+        "slim/slim": "^4.12",
+        "slim/psr7": "^1.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Workshop\\": "domain/workshop/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "scripts": {
+        "check": "php check.php",
+        "verify": "php verify.php",
+        "test": "php run-tests.php"
+    },
+    "scripts-descriptions": {
+        "check": "Environment, course integrity, and how far through the lessons you are",
+        "verify": "Syntax-check every file, probe every 8.4/8.5 feature, run every reference solution",
+        "test": "Run the PHPUnit suites, one process per file"
+    }
+}

@@ -1,0 +1,59 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# What this file is actually deciding
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# This repository is THE COURSE, not one person's copy of it. So everything the
+# course ships is tracked — including every reference solution and every quiz
+# answer key, which is where a lot of the teaching lives:
+#
+#     challenge/solution/*.php    the reference implementation
+#     challenge/checks.php        the assertions that do the grading
+#     quiz/QUIZ.md                answer key in the <details> block at the foot
+#
+# None of that is ignored and none of it should be.
+#
+# What IS ignored is one particular learner's work. `check.php` grades by
+# running the learner's domain/workshop/ against the course's checks.php, so
+# grading works perfectly for somebody who has cloned this and written nothing.
+# But if a completed domain/workshop/ were committed, a fresh clone would report
+# Module 1 as finished before its owner had opened a file.
+#
+# If you want your own work under version control, keep it on a separate branch
+# that removes these two rules, or run `git init` inside domain/workshop/.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# The learner's answers to the code challenges. See above.
+/domain/workshop/*.php
+/domain/workshop/**/*.php
+
+# The learner's progress record. PROGRESS.template.md is tracked; copy it.
+/PROGRESS.md
+
+# The learner's answers to the written challenges — Module 0, and the follow-up
+# questions at the foot of every challenge. Deliberately without a key: a
+# published set of model answers would spoil an exercise whose whole value is
+# forming the argument yourself.
+my-answers.md
+my-glossary.md
+/notes/
+
+# Composer — needed from Module 3, never committed
+/vendor/
+
+# PHPUnit
+/.phpunit.cache/
+
+# Scratch output from the harness
+/solution-output/
+
+# SQLite databases created by Module 3's integration tests
+*.sqlite
+*.sqlite3
+*.db
+
+# Editors and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

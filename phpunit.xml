@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    PHPUnit configuration — Advanced Domain Architecture
+    =====================================================
+
+    Do NOT run `vendor/bin/phpunit` with no arguments.
+
+    Lessons deliberately reuse class names: JobCard is written four times across
+    the course, each time better than the last, and none of the lesson files are
+    namespaced under a lesson-specific namespace. Loading them all into one
+    process dies with "Cannot declare class JobCard, name already in use".
+
+    Use the runner instead. It gives every file its own process:
+
+        php run-tests.php
+        php run-tests.php 3.4
+        php run-tests.php module-3
+
+    Testsuites are added here as the modules that need them are written. Modules
+    0, 1 and 2 have none: their challenges are plain scripts judged by their
+    acceptance checks, which `php check.php` runs.
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache"
+         beStrictAboutOutputDuringTests="false"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         failOnWarning="false"
+         failOnNotice="false">
+
+    <testsuites>
+        <!-- Added from Module 3 onwards. -->
+        <testsuite name="domain">
+            <directory suffix="Test.php">domain</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory>domain</directory>
+        </include>
+    </source>
+</phpunit>
