@@ -26,6 +26,10 @@
 /domain/workshop/*.php
 /domain/workshop/**/*.php
 
+# Same, for the infrastructure layer, from Lesson 3.1 onwards.
+/infrastructure/*.php
+/infrastructure/**/*.php
+
 # The learner's progress record. PROGRESS.template.md is tracked; copy it.
 /PROGRESS.md
 

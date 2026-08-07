@@ -77,8 +77,16 @@ function solutionDirsInCourseOrder(string $root): array
 // NEWEST FIRST. The autoloader tries roots in registration order and the first
 // file that exists wins, so this makes the most recent version of every class
 // the one that loads.
+//
+// From Lesson 3.1 a solution directory may also contain an `infrastructure/`
+// subdirectory. Registering both roots keeps the placement checks meaningful
+// during a regression sweep.
 foreach (array_reverse(solutionDirsInCourseOrder($root)) as $dir) {
     workshop_autoload($dir);
+
+    if (is_dir($dir . '/infrastructure')) {
+        infrastructure_autoload($dir . '/infrastructure');
+    }
 }
 
 require $checks;

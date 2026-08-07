@@ -16,7 +16,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Workshop\\": "domain/workshop/"
+            "Workshop\\": "domain/workshop/",
+            "Infrastructure\\": "infrastructure/"
         }
     },
     "config": {

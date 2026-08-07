@@ -195,24 +195,32 @@ if (!function_exists('acceptance')) {
     }
 
     /**
-     * True when the given class's source contains no float arithmetic.
+     * A class's source with every comment and doc block removed.
      *
-     * Money must never touch a float — 0.1 + 0.2 is not 0.3, and on a ledger
-     * that becomes an amount somebody reconciles by hand every month.
+     * ALWAYS USE THIS WHEN A CHECK IS ABOUT WHAT THE CODE DOES.
      *
-     * Comments and doc blocks are stripped before the check, deliberately: it
-     * is float ARITHMETIC that is banned, not the word. A class that explains
-     * in a doc block why it avoids floats should not fail for saying so.
+     * The distinction it exists for: a check that greps a whole file cannot
+     * tell a dependency from a sentence describing one. A domain interface
+     * whose doc block explains "Infrastructure supplies it" is describing the
+     * dependency rule, not breaking it — and a check that fails on the word
+     * punishes the file for being documented.
+     *
+     * That is not hypothetical. The first version of Lesson 3.1's Rule 1 check
+     * searched the raw source and failed its own reference solution on a
+     * comment. It cost a verify run to find, which is exactly what a verify run
+     * is for.
+     *
+     * @return string empty when the class cannot be located
      */
-    function no_float_in(string $class): bool
+    function class_source_without_comments(string $class): string
     {
-        if (!class_exists($class) && !enum_exists($class)) {
-            return false;
+        if (!class_exists($class) && !interface_exists($class) && !enum_exists($class) && !trait_exists($class)) {
+            return '';
         }
 
         $file = (new \ReflectionClass($class))->getFileName();
         if ($file === false) {
-            return false;
+            return '';
         }
 
         $stripped = '';
@@ -221,6 +229,27 @@ if (!function_exists('acceptance')) {
                 continue;
             }
             $stripped .= is_array($token) ? $token[1] : $token;
+        }
+
+        return $stripped;
+    }
+
+    /**
+     * True when the given class's source contains no float arithmetic.
+     *
+     * Money must never touch a float — 0.1 + 0.2 is not 0.3, and on a ledger
+     * that becomes an amount somebody reconciles by hand every month.
+     *
+     * Comments are stripped first, deliberately: it is float ARITHMETIC that is
+     * banned, not the word. A class that explains in a doc block why it avoids
+     * floats should not fail for saying so.
+     */
+    function no_float_in(string $class): bool
+    {
+        $stripped = class_source_without_comments($class);
+
+        if ($stripped === '') {
+            return false;
         }
 
         return preg_match('/\bfloat\b/i', $stripped) !== 1
