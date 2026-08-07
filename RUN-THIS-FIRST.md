@@ -37,8 +37,9 @@ had never matched reality, fabricated syntax for a PHP 8.5 feature. Every one of
 because nothing ever ran the code.
 
 So the first thing that happened here was that it ran, and it has been re-run after every lesson
-since. Seven things came out of that, and all seven are worth recording. Three of them came from
-Module 4, and all three were found by the syntax sweep or by the checks — none by reading.
+since. Eight things came out of that, and all eight are worth recording. Four came from Modules 4
+and 5, and every one was found by the syntax sweep or by a reference solution failing its own
+checks — none by reading.
 
 ### 1. A false green in `verify.php` itself
 
@@ -132,7 +133,35 @@ A leak test that fires on correct output is a leak test somebody switches off. T
 feeds the detector a poisoned body and asserts it fires, because a test that cannot fail is not a
 test.
 
-### 7. A version assumption that was too absolute
+### 7. A source grep that could not tell PartStockRow from PartStock
+
+Lesson 5.2 asserts that two legacy services were left alone — that neither was converted to use the
+extracted aggregate. The first version searched their source for `PartStock`:
+
+```php
+!str_contains(class_source_without_comments(PickingService::class), 'PartStock')
+```
+
+Both services take a `PartStockRow $row` parameter, and `PartStockRow` **contains** `PartStock`. So
+the check reported that two untouched files had been converted, and failed its own reference
+solution.
+
+The fix is a word boundary — `preg_match('/\bPartStock\b/', ...)` — which does not match
+`PartStockRow`, because `k` and `R` are both word characters.
+
+**This is the third time this project has been bitten by the same shape of mistake.** Lesson 3.1's
+Rule 1 check could not tell a dependency from a sentence describing one; `no_float_in()` had already
+solved that exact problem a module earlier and nobody reused it; and now a substring test cannot tell
+an identifier from a longer identifier containing it.
+
+The rule, written down properly this time: **a check that reads source is a parser with the parsing
+left out.** If it is going to make a decision, give it enough context to make it correctly — comments
+stripped, identifiers bounded — or one day it will fail something that is right.
+
+Found by the reference solution failing its own checks, which is the one signal in this harness that
+cannot be argued with.
+
+### 8. A version assumption that was too absolute
 
 The first run was on 8.4.22, because Herd's **global** PHP override silently wins over the per-site
 setting. The harness treated that as six failures. In fact only three files were affected — all

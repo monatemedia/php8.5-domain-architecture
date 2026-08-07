@@ -558,4 +558,169 @@ have been touching the domain.
 
 ---
 
-*Gates for Modules 5 and 6 are written as those modules are built.*
+---
+
+# Gate 5 — After Module 5
+
+## Part 1 — Module 5
+
+**G5.1** Name the five rungs of the ladder in order, give the cost of each, and say which one costs
+nothing at all despite appearing near the top. Explain why that one is free.
+
+**G5.2** A colleague on a Laravel codebase asks whether to build a separate domain layer with a
+mapper. Give the two things it genuinely buys, the four things it costs, and the two signals — beyond
+Module 0's — that would make you say yes.
+
+**G5.3** The same question, on a Doctrine codebase. Say how your answer changes and why, and name the
+cost that remains even in the good case.
+
+**G5.4** `PartStock::of()` loads a row where reserved exceeds on hand, but refuses one where on hand
+is negative. Justify both halves, and name the earlier lesson the first half comes from.
+
+**G5.5** You are replacing a six-year-old procedure. Describe what you write before changing any call
+site, what it is for, and what you do with the three cases where the old and new paths disagree.
+
+**G5.6** After the extraction, the invariant can still be broken. Say how, and defend shipping it
+anyway.
+
+## Part 2 — Reaching back
+
+**G5.7** *(Module 4)* Two new exception leaves arrived in Lesson 5.2, from somebody working on a
+legacy extraction a module later. Describe exactly what Lesson 4.4's exhaustiveness check did about
+that, and what would have happened without it.
+
+**G5.8** *(Module 3)* Lesson 3.2 argued that reconstitution relaxes an aggregate's rules because
+loading is not a change. Lesson 5.2 applies the same argument to a legacy table. Say what is
+*different* about the second case, and why it makes the argument harder rather than easier.
+
+**G5.9** *(Module 1)* Lesson 5.1 produces `JobCardRecord` — a second model of the job card — in a
+course that spent Module 1 arguing against exactly that. Reconcile them, then say what you would do
+if both existed in one real codebase.
+
+---
+
+<details>
+<summary><strong>Gate 5 — answer key.</strong> Answer first.</summary>
+
+**G5.1** 1 — named methods instead of public setters: **free**. 2 — invariants in the model rather
+than a service: **cheap**. 3 — value objects over the existing columns: **cheap**. 4 — typed domain
+exceptions and boundary mapping: **cheap**. 5 — a separate domain layer with a mapper:
+**expensive**.
+
+Rung 4 costs nothing, because **an exception tree and a boundary mapper have no opinion about
+persistence.** `ProblemDetailsMapper` keys on `failureCode()` and never asks where the exception came
+from, so the identical body comes out of an Active Record model and a domain aggregate. That makes
+Module 4 the cheapest large improvement available to a legacy PHP application.
+
+**G5.2** Buys: rules **testable without a database**, and a domain that **survives replacing the
+ORM**.
+
+Costs: two models of the same thing maintained together forever; a mapper that every new column must
+be added to and that everybody forgets; the framework fighting you (lazy loading, model events, mass
+assignment, scopes, observers — all of which assume the model *is* the domain object); and two
+vocabularies in every code review.
+
+The two extra signals: **the persistence model and the domain model have genuinely diverged in
+shape** — one aggregate is five tables, or one table serves three concepts distinguished by a `type`
+column; and **you are already writing the mapper by hand**, spread across services as `toArray()`,
+`fromRequest()` and `->fresh()->load(...)`. In the second case rung 5 is not new cost, it is
+consolidating cost you are already paying badly.
+
+The counter-signal: **no test suite.** Then rungs 1–3 first, and use the tests you write on the way up
+to make rung 5 possible later.
+
+**G5.3** It usually becomes **no**. A Doctrine entity is a plain object with private properties that
+a mapper populates by reflection — no `save()`, no static finders, no magic attributes. It is already
+most of an aggregate, so the honest advice is: put the rules on the entity, keep the repository
+interface in the domain, and do not build a second model.
+
+The cost that remains: **ORM attributes on domain classes, and an ORM `Collection` type inside the
+aggregate.** Both are infrastructural things sitting in a domain file. They are small enough to be
+worth it, and pretending they are not there is how this advice gets oversold.
+
+The decision is the same in both stacks — Rule 6, ceremony must be paid for. It reaches two answers
+because the price is different.
+
+**G5.4** **Loading an inconsistent row** is right because the invariant governs *changes*, and loading
+is not a change — Lesson 3.2's reconstitution argument. Practically: a factory that refused would take
+down the screen that was going to tell you how many bad rows there are, on the afternoon of the
+deploy. Legacy data is not clean, and an extraction that cannot load the data is not an extraction.
+
+**Refusing a negative count** is right because that is a different category. Inconsistent means two
+fields disagree — plausible, and produced by six years of a missing floor check. Impossible means one
+field is nonsense: a shelf cannot hold minus four of anything, so that row is a bug to find rather
+than dirt to tolerate.
+
+**G5.5** A **characterisation test**: both paths, same inputs, tabulated. It records what the old code
+*actually does* — not what it was supposed to do and not what the ticket says.
+
+The seven inputs where they agree are the test that lets you swap the class and sleep. Write them
+*before* changing anything; discovered afterwards they are worthless, because by then you are testing
+your own assumptions.
+
+For each of the three divergences, three questions: is anything relying on it (grep the call sites,
+check the logs); what breaks if you fix it; and can you ship the fix separately? Then **name them in
+the pull request**. "We found some bugs" is not a decision; "we changed behaviour in these three
+cases" is.
+
+Ship the extraction and the behaviour changes as separate commits. A behaviour change inside a
+refactor is how a refactor gets blamed for an outage.
+
+**G5.6** Through `PickingService::fit()`, which is untouched and enforces nothing — it will still
+drive `on_hand` negative.
+
+Ship it anyway because the path generating the incidents is now closed, the number of places that can
+break the rule went from two to one, and the remaining one is known, named and cheap to convert
+because `PartStock::consume()` already exists and already refuses.
+
+The alternative — fixing both at once — is twice the diff and twice the risk, and it is the point at
+which the work stops being reviewable and starts being a branch. **A strangler that grows to three
+services in its first week is a rewrite that has not admitted it yet.**
+
+**G5.7** It **failed the build** until the two codes were added to the catalogue. The check walks
+every leaf of the tree and asserts each maps to something other than 500, so two new leaves with no
+entry is a red suite.
+
+Without it, both would have become **opaque 500s**. A client asking to reserve seven alternators when
+six are free would have been told the server was broken, and nothing anywhere would have failed —
+found weeks later by a support ticket, and probably blamed on the deployment rather than a missing
+table entry.
+
+That is exactly the drift the objection in Lesson 4.2's quiz predicted — that a table in
+infrastructure will fall out of step with the domain it describes. The answer was never to move the
+table into the domain; it was to make drift fail the build. Two modules later, it did.
+
+**G5.8** In Lesson 3.2 the rows had been written by code that already enforced the rules, so
+reconstitution relaxed the rules for data that satisfied them anyway. The argument was about *where
+validation belongs*, and nothing was at stake if you got it slightly wrong.
+
+In Lesson 5.2 the rows were written by code that did **not** enforce the rules, and some of them are
+genuinely invalid. So the same decision now has consequences: you are choosing to build domain objects
+that violate their own invariant, in production, knowingly.
+
+That makes it harder in two ways. First, you need `isConsistent()` — a report that did not exist in
+3.2, because there was nothing to report. Second, the answer it gives can invalidate the whole plan:
+eleven bad rows is an afternoon, forty thousand means the invariant you were about to enforce is not
+the one the business has been operating under.
+
+3.2's version was a design choice. 5.2's is a design choice plus an empirical question you have to go
+and answer.
+
+**G5.9** They answer different questions. Module 1 argued against an **anemic** model — public getters
+and setters with the logic in a service — and `JobCardRecord` is not that: it has named operations,
+enforces its own invariant, and refuses invalid state. It is a rich model that lives in
+`infrastructure/` because it also knows how to save itself.
+
+What Module 1 warned about is *two* anemic models, or a rich domain model and a rich ORM model that
+disagree. Lesson 5.1 deliberately builds only one, and its checks assert that no aggregate,
+repository or mapper was introduced alongside it.
+
+In a real codebase where both existed: pick which is authoritative and make the other a shell —
+usually the domain one, with the record demoted to a row — and do it **one aggregate at a time**
+rather than declaring it. Which is Lesson 5.2.
+
+</details>
+
+---
+
+*Gate 6 is written with the capstone.*
