@@ -1,8 +1,8 @@
 # Advanced Domain Architecture & Tactical DDD
 ### Modelling business reality in PHP 8.5 — aggregates, invariants, events and exception trees
 
-> **Build status:** Modules 0 and 1 are written and verified on PHP 8.5.7, as are Lessons 2.1 and
-> 2.2. The rest of Modules 2–6 is scaffolded from the blueprint but not yet built. `php check.php`
+> **Build status:** Modules 0 and 1 are written and verified on PHP 8.5.7, as are Lessons 2.1 to
+> 2.3. The rest of Modules 2–6 is scaffolded from the blueprint but not yet built. `php check.php`
 > counts only what exists, so the percentage is honest.
 
 ---
