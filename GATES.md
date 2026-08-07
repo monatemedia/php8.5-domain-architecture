@@ -392,4 +392,170 @@ one *because it is a different fact*.
 
 ---
 
-*Gates for Modules 4 onwards are written as those modules are built.*
+---
+
+# Gate 4 — After Module 4
+
+## Part 1 — Module 4
+
+**G4.1** Name the **three** categories of failure, give the test that separates each from the
+others, and say what the correct handling is for each. Then say which one people forget, and what
+that specific mistake costs.
+
+**G4.2** PHP's SPL exception hierarchy makes one thing impossible that this module needed. Say what,
+say why it is impossible rather than merely awkward, and give the mechanism the course used instead.
+
+**G4.3** You are reviewing a pull request that adds a fourth level to the exception tree:
+`WorkshopException → InvoicingException → InvoiceException → InvoiceAlreadyIssued`. Give the test
+you would apply, apply it, and say what you would ask for.
+
+**G4.4** `IllegalStatusTransition` puts `$status->value` in `context()` and `$status->label()` in the
+message. Explain the rule that produces that split, and give a concrete failure that follows from
+getting it wrong.
+
+**G4.5** `checkCanComplete()` and `complete()` are the same rules read two ways. Name the failure
+mode this pattern is famous for, say why it hurts the careful caller more than the careless one, and
+describe the mechanism — not the discipline — that prevents it.
+
+**G4.6** A colleague wants `public function httpStatus(): int` on `CarriesContext`. Give the
+strongest version of their argument, then the single fact that defeats it. (The fact is about a
+request, not about a class.)
+
+## Part 2 — Reaching back
+
+**G4.7** *(Module 1)* Lesson 3.1 chose `\DomainException` for `JobCardNotFound` when there was no
+tree to fit into. Module 4 re-parented that class twice and nothing broke. Say what property of the
+original decision made that cheap, and describe what Module 4 would have looked like if the original
+had been `\RuntimeException`.
+
+**G4.8** *(Module 2)* `JobCard` now names seven exception classes it did not name before. Argue that
+this is acceptable coupling, then give the threshold past which it stops being acceptable — and say
+which Module 2 warning it would be telling you about.
+
+**G4.9** *(Module 3)* Lesson 4.3 measures the cost of asking `checkCanComplete()` for ten thousand
+job cards. Give the answer, and say why the fix belongs to Module 3 rather than to Module 4.
+
+---
+
+<details>
+<summary><strong>Gate 4 — answer key.</strong> Answer first.</summary>
+
+**G4.1** **(a) Expected** — the business has an answer; somebody who runs it would recognise the
+failure and know what to do. Handling: a 4xx with the reason. **(b) Exceptional** — nobody has an
+answer; the request was valid and the machinery fell over. Handling: a 500, a log with a stack
+trace, and nothing useful to the client. **(c) Programmer error** — it should be impossible and the
+fix is a code change. Handling: let it be loud.
+
+The tests: *would Marcus recognise this as something that happens in his workshop?* Then, for the
+ambiguous cases, *would retrying the identical request ever succeed?* (yes → b) and *is there a
+different valid request that would work?* (yes → a; no, and no retry helps → c).
+
+**Category (c) is the forgotten one**, and forgetting it produces a `catch (\Throwable)` at the
+boundary that swallows real bugs. The cost is specific: a `TypeError` with a file and a line number
+becomes "users occasionally see an error."
+
+**G4.2** There is **no single class** you can name in a `catch` clause meaning "my domain refused
+something."
+
+The domain throws from both halves of SPL — `\InvalidArgumentException` for a bad argument,
+`\DomainException` for a broken rule — and those are **siblings**. Their only common ancestor is
+`\LogicException`, which also covers every `\BadFunctionCallException` in `vendor/`.
+
+It is impossible rather than awkward because PHP gives each class exactly one inheritance slot and
+SPL has already spent it. You cannot fix it by choosing a better base class.
+
+The mechanism: an **interface**. `WorkshopFailure extends \Throwable`, implemented by both roots,
+spanning a hierarchy neither can leave.
+
+**G4.3** The test: **name the `catch` clause that would use each node, and the field it holds. If you
+can do neither, you are drawing a diagram.**
+
+Applied: `InvoicingException` and `InvoiceException` both fail. Nobody writes a clause for a node
+with one child, because catching the child is strictly more precise, and with one child there is
+nothing to hoist. Two nodes with one child each is a rename with extra steps, twice.
+
+What to ask for: collapse both, so `InvoiceAlreadyIssued extends WorkshopException` — or, if invoices
+have their own identity that several failures will carry, one node holding it. Add the second level
+when the second class arrives; that is a two-minute change then and costs nothing now. Rule 6,
+applied to a hierarchy.
+
+**G4.4** **Machine values in the context; human labels in the message.** They serve different
+audiences, and a class serving both must keep them apart.
+
+The concrete failure: a client greys out buttons by reading `allowed`. If the context carried
+labels, then translating the application — or a designer changing "Awaiting Authorisation" to
+"Needs approval" — would change the values a client switches on. It would not fail loudly; the client
+would compute a status that does not exist and render a dead button.
+
+`in_progress` is not English. It is an identifier that happens to be spelled with Latin letters, and
+that is why it survives translation.
+
+**G4.5** **Drift.** The check and the operation encode the same rules separately, until somebody adds
+a guard to one and not the other.
+
+It hurts the careful caller more because that caller has an `if` where the careless one has a
+`catch`. Its error handling is *thinner precisely because it checked first*, so the escaping
+exception travels further and becomes a 500 for a rule the system understands perfectly. **Checking
+made it worse**, which is what makes drift the failure mode of the pattern rather than a bug in it.
+
+The mechanism: `complete()` is written as `$this->checkCanComplete()->orThrow();`. One list of
+guards, two ways of reading it. A developer adding a rule has nowhere else to put it. Not a
+convention, not a review rule — there is only one list.
+
+**G4.6** Their argument: the domain already decides that a missing job card and an illegal transition
+are different kinds of failure — that *is* the tree — and the boundary's table encodes the same
+distinction a second time. Two places encoding one decision drift, and when they drift the domain is
+right and the table is stale. It is one integer.
+
+The fact that defeats it: **`JobCardNotFound` is a 404 from `GET /job-cards/{id}` and a 422 from
+`POST /invoices` with an unknown id in the body.** Same exception, same failure code, two correct
+answers — because the status is about the **request**, and the exception is raised inside a
+repository that has never seen one.
+
+Their real worry, drift, is answered by a test rather than by moving the table: walk every leaf of
+the tree and assert each maps to something other than 500.
+
+**G4.7** The original type was chosen **on the merits, for a stated reason** — 3.1's doc block argued
+that a missing job card is a business-level mistake rather than a crash, and that the same exception
+is right whether the repository is SQLite, an array or a filing cabinet.
+
+Because of that, re-parenting was additive: `JobCardNotFound → JobCardException → WorkshopException →
+\DomainException` still satisfies every `throws(\DomainException::class, ...)` and every
+`is_subclass_of(..., DomainException::class)` written in Modules 1 to 3. `instanceof` does not care
+about depth.
+
+Had it been a `\RuntimeException` — a defensible-sounding choice, "because repositories are
+infrastructure" — Module 4 would have been a **migration**: either the tree grows a second trunk
+under `\RuntimeException` for one class, or forty assertions across three modules get rewritten.
+Re-parenting is cheap when the first parent was right.
+
+**G4.8** Acceptable because all seven are in `Workshop\` — no new `use` statements — and each
+describes a rule this aggregate itself enforces. An aggregate naming the failures of its own
+invariants is cohesion, not coupling.
+
+The threshold is roughly where the list stops fitting on a screen; call it twenty. Past that it is
+not telling you the exception design is wrong. It is telling you **the aggregate is too big** —
+Lesson 2.1's warning that big aggregates are the second most common DDD failure, arriving from a
+direction it did not anticipate. The size of an aggregate's exception vocabulary measures the number
+of rules it enforces.
+
+**G4.9** Roughly fifteen thousand exceptions constructed and discarded, backtraces included, to
+produce one integer — because `Refusal` holds the failure it was built from, and building a refused
+`Decision` builds one exception per reason.
+
+The fix is a **read model** (Lesson 3.3): ask the database how many rows are in a blocked state and
+never load an aggregate. Orders of magnitude faster, and it was the correct design before the
+exceptions were an issue.
+
+It belongs to Module 3 because the problem is not the cost of a `Refusal` — it is a **bulk question
+being answered by loading aggregates one at a time**. Removing the held exception would buy
+milliseconds and reintroduce drift, trading a correctness property for a performance one.
+
+The general rule: when a domain pattern is too slow in bulk, check whether the bulk operation should
+have been touching the domain.
+
+</details>
+
+---
+
+*Gates for Modules 5 and 6 are written as those modules are built.*

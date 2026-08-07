@@ -7,20 +7,24 @@
 
 ## The result
 
-Re-verified after each lesson lands. As of Lesson 3.4 — Modules 0 to 3 complete:
+Re-verified after each lesson lands. As of Lesson 4.4 — Modules 0 to 4 complete:
 
 | Check | Result |
 |-------|--------|
 | PHP version | 8.5.7 |
 | Language-feature probes | **10 / 10** — including `clone($obj, [...])`, static asymmetric visibility, `#[\NoDiscard]` |
-| Files parsing | **132 / 132** |
-| Reference solutions passing their own acceptance checks | **12 / 12** |
-| Earlier lesson specs still passing against the newest code | **12 / 12** |
-| Examples running to exit code 0 | **40 / 40** |
+| Files parsing | **182 / 182** |
+| Reference solutions passing their own acceptance checks | **16 / 16** |
+| Earlier lesson specs still passing against the newest code | **16 / 16** |
+| Examples running to exit code 0 | **52 / 52** |
 | `check.php` | stops correctly at Lesson 0.1 |
 
 No warnings. `composer install` has been run — Module 3 is the first that needs it, and
 `pdo_sqlite` is present for Lesson 3.4's integration tests.
+
+One example prints a warning on purpose: Lesson 4.3's `03-what-it-costs.php` discards a
+`#[\NoDiscard]` return value so you can watch PHP object to it. That is the output, not a defect,
+and the exit code is still 0.
 
 ---
 
@@ -33,7 +37,8 @@ had never matched reality, fabricated syntax for a PHP 8.5 feature. Every one of
 because nothing ever ran the code.
 
 So the first thing that happened here was that it ran, and it has been re-run after every lesson
-since. Four things came out of that, and all four are worth recording.
+since. Seven things came out of that, and all seven are worth recording. Three of them came from
+Module 4, and all three were found by the syntax sweep or by the checks — none by reading.
 
 ### 1. A false green in `verify.php` itself
 
@@ -80,7 +85,54 @@ Both now share `class_source_without_comments()` in `lib/acceptance.php`.
 That one cost a single `verify.php` run, which is the cheapest a course bug has ever been found in
 this project. It would have shipped in the previous course.
 
-### 4. A version assumption that was too absolute
+### 4. Two arrow functions that could not return void
+
+Lesson 4.3's example 02 wrote its test callables as `static fn(string $s): void => $x->complete();`.
+Arrow functions **always** return their expression, so a `void` return type on one is a fatal error:
+*"A void function must not return a value."*
+
+Three of them, in one file, and every one was written in the same minute. It is the kind of mistake
+that only exists because arrow functions look like short closures and are not, and the only thing
+that would ever have found it is running the file.
+
+### 5. A property name that SPL had already taken
+
+Lesson 4.2's example 01 builds the "one exception class carrying a string code" design, to argue
+against it. The obvious spelling of that class is:
+
+```php
+public function __construct(string $message, public readonly string $code)
+```
+
+...which is a fatal error, because `\Exception` already declares `protected int $code` and a
+subclass may not redeclare a non-readonly property as readonly.
+
+Both `$code` and `$message` are taken on every exception in PHP. That turned out to be worth keeping
+rather than merely fixing — it is a small piece of evidence for why the tree in Lesson 4.2 carries
+`failureCode()` as a **method** rather than reusing a property name SPL owns — so the example now
+says so in a doc block, and the README says it too.
+
+### 6. A leak test that failed on the correct answer
+
+Lesson 4.4 asserts that nothing internal reaches the wire, by searching problem bodies for forbidden
+substrings. The first version searched the raw JSON for a backslash and for the word `Error`.
+
+Both were wrong, in opposite directions:
+
+- **`Error`** appears in `"title": "Internal Server Error"` — the HTTP status phrase, and exactly
+  what RFC 9457 asks for when `type` is `about:blank`. The check failed the right answer.
+- **A backslash** appears in any JSON-encoded body whose message quotes something: `"Front pads"`
+  becomes `\"Front pads\"`. Without `JSON_UNESCAPED_UNICODE` an em dash does the same.
+
+The fix was to inspect the **decoded structure** rather than the JSON text, so an encoder's choices
+can neither raise a false alarm nor hide a real leak — `Workshop\JobCard` is a backslash in the
+decoded string whatever the encoder did to it — and to drop `Error` from the list.
+
+A leak test that fires on correct output is a leak test somebody switches off. The suite now also
+feeds the detector a poisoned body and asserts it fires, because a test that cannot fail is not a
+test.
+
+### 7. A version assumption that was too absolute
 
 The first run was on 8.4.22, because Herd's **global** PHP override silently wins over the per-site
 setting. The harness treated that as six failures. In fact only three files were affected — all
