@@ -81,11 +81,22 @@ function solutionDirsInCourseOrder(string $root): array
 // From Lesson 3.1 a solution directory may also contain an `infrastructure/`
 // subdirectory. Registering both roots keeps the placement checks meaningful
 // during a regression sweep.
+//
+// From Lesson 5.1 a CHALLENGE directory may also contain `given/` — code the
+// course supplies rather than the student writing it, such as the miniature
+// Active Record base. It is a third Infrastructure root, registered after the
+// solution's own so that a student class always wins.
 foreach (array_reverse(solutionDirsInCourseOrder($root)) as $dir) {
     workshop_autoload($dir);
 
     if (is_dir($dir . '/infrastructure')) {
         infrastructure_autoload($dir . '/infrastructure');
+    }
+
+    $given = dirname($dir) . '/given';
+
+    if (is_dir($given)) {
+        infrastructure_autoload($given);
     }
 }
 
