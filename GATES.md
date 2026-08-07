@@ -723,4 +723,185 @@ rather than declaring it. Which is Lesson 5.2.
 
 ---
 
-*Gate 6 is written with the capstone.*
+---
+
+# Gate 6 — After the Capstone
+
+The last gate. Part 2 reaches back to every module, because that is what a capstone is for.
+
+## Part 1 — The capstone
+
+**G6.1** The import scan reports that the domain layer's entire external vocabulary is four SPL
+names. Explain why it is four rather than forty, and say why that is a stronger result than the one
+the scan was written to find.
+
+**G6.2** Why a scan and not a convention? Describe the specific way an unenforced architectural rule
+decays, and why a build failure is the only form that survives.
+
+**G6.3** The scanner reads tokens. Give the two bugs in this project's history that made that
+non-negotiable, and state the rule they produced.
+
+**G6.4** A detector needs testing in both directions. Name the two failure modes and say which one is
+worse.
+
+**G6.5** The error-handling middleware is about twenty lines. List the five decisions it does **not**
+have to make and where each was made instead. Then say what it would mean if the class needed a
+hundred lines.
+
+**G6.6** The middleware catches `\Throwable`, which Lesson 4.1 called the most expensive
+two-character change in the module. Reconcile them, and give the line of code that does the
+reconciling.
+
+## Part 2 — The whole course
+
+**G6.7** *(Module 0)* You now have a working example of tactical DDD end to end. Argue against using
+it, for a system you have actually worked on. Be specific.
+
+**G6.8** *(Module 3)* `CompleteJobCard` does `remove()` then `add()`. Trace that back to the decision
+that caused it, say what is wrong with it beyond being ugly, and choose between the two fixes.
+
+**G6.9** *(Modules 1, 2 and 4)* `POST /job-cards` with an empty `vehicleId` returns 500. Explain the
+whole chain — which lesson created the gap, which lesson would have closed it, why nothing noticed
+for two modules, and what the fix costs.
+
+**G6.10** *(Module 5)* Somebody on a five-year-old Laravel codebase has read this course and wants to
+start on Monday. Give them one thing to do, and say why you did not give them the capstone.
+
+---
+
+<details>
+<summary><strong>Gate 6 — answer key.</strong> Answer first. It is the last one.</summary>
+
+**G6.1** Because every domain class is in the **same namespace**, so they refer to each other
+unqualified. There is not one `use` statement in the layer, and the only names the tokeniser finds
+are the SPL exception classes the tree extends plus the `NoDiscard` attribute.
+
+It is stronger because the question asked was *"does the domain name anything infrastructural?"* and
+the answer turns out to be *"the domain names almost nothing at all."* "No framework imports" is
+consistent with fifty imports from elsewhere. Four SPL names is not consistent with anything except a
+layer that can be lifted out whole.
+
+Worth noting how it was found: two checks **failing**. They had been written expecting
+`Workshop\JobCards` among the references. It is not there, and understanding why produced a better
+result than the one being designed for.
+
+**G6.2** It decays through one line — `use Infrastructure\Clock;` added at 5pm because the
+alternative was an interface and a container binding. Nobody reviews it; it is one line, and it is
+obviously the pragmatic choice in that moment. Six months later the domain does not compile without
+the framework and nobody can say which change did it.
+
+A build failure survives because it does not depend on anybody remembering, caring, or having time.
+Every other mechanism — documentation, a diagram, a convention, a code review checklist — is a
+request for attention, and attention is exactly what is missing on the day it matters.
+
+**G6.3** **Bug 3**: Lesson 3.1's Rule 1 check searched raw source for `Infrastructure` and failed its
+own reference solution on a doc block reading *"the domain declares what it needs; Infrastructure
+supplies it."* It could not tell a dependency from a sentence describing one.
+
+**Bug 7**: Lesson 5.2's check searched for `PartStock` and matched `PartStockRow`. It could not tell
+an identifier from a longer identifier containing it.
+
+The rule: **a check that reads source is a parser with the parsing left out.** If it is going to make
+a decision, give it enough context to make it correctly — comments stripped, identifiers bounded, or
+better, use the tokeniser that has already done the work.
+
+**G6.4** A detector that **never fires** passes forever: the check is decorative, the suite is green,
+and nobody finds out until the thing it was guarding has been broken for a year. A detector that
+**always fires** — including on correct output — gets switched off by somebody shipping a release on
+a Friday, and it does not come back.
+
+The first is worse, because it is silent. The second at least produces an argument.
+
+Both were live risks in this project: Lesson 4.4's leak test originally failed on the correct opaque
+body, because "Internal Server Error" contains the word "Error".
+
+**G6.5** Which failures are safe to show (4.1's `WorkshopFailure` marker); what to call this failure
+(4.2's `failureCode()`); what fields to include (4.2's `context()`); which status code (4.4's
+catalogue); and what a 500 may say (4.4's `opaque()`, which says nothing).
+
+If the middleware needed a hundred lines, **the exceptions were not carrying their weight** — the
+knowledge would be sitting at the boundary, where it has to be repeated for every second boundary
+and cannot be tested without HTTP.
+
+**G6.6** They are the same position seen from two sides, and what reconciles them is **who gets
+told**. The user gets an opaque 500 with no message, class or trace. The operator gets the exception
+intact. "Loud" never meant loud to the person who typed the wrong registration number.
+
+The line that does it:
+
+```php
+if ($problem->status >= 500) {
+    $this->unexpected->record($failure);
+}
+```
+
+Note what it keys on: not the exception type, but **what the mapper decided**. A 4xx is the system
+working, and reporting those is how an error tracker becomes noise nobody reads.
+
+**G6.7** Any specific, honest answer. The shape of a good one names a real system and applies Module
+0's signals rather than reciting them: *the schema is the model; the only "rule" is that a status
+field has four values; there are no invariants spanning entities; the arguments in meetings are about
+which fields appear on which screen, not about what is allowed.*
+
+Then Lesson 5.1's costing: rung 5 there produces four layers of indirection around an `UPDATE`
+statement and two vocabularies in every code review, and the whole benefit would have been available
+from rungs 1 to 3 in a fortnight.
+
+An answer that cannot name a system gets no credit. The judgement is the deliverable of Module 0, and
+it is only demonstrated on something real.
+
+**G6.8** Back to **Lesson 3.1**, which chose a collection-oriented repository — `add()`/`remove()`,
+no `save()` — warned that it had a cost, and deliberately refused to design around it.
+
+Beyond ugly: `remove()` commits, then `add()` commits, so **between them the job card does not
+exist**. A concurrent read gets `JobCardNotFound` for a job card that is merely being saved, and a
+crash between the two loses it. Single-threaded against `:memory:` nothing will ever show it, which
+is what makes it the kind of bug that ships.
+
+The two fixes: a **unit of work** — correct, and real machinery (change tracking, identity map,
+write ordering) that most PHP teams decide against; or an explicit **`save(JobCard $jobCard)`** —
+three lines, honest, and it moves one word of storage vocabulary back into every caller.
+
+A defensible choice either way. The one thing that is not defensible is leaving it, now that you have
+seen the window.
+
+**G6.9** **Modules 1 and 2** created the gap: value objects throw bare `\InvalidArgumentException`,
+which was the right call at the time because there was no tree to fit into.
+
+**Lesson 4.2** would have closed it and explicitly did not — its challenge converted `JobCard` and
+the repositories and left `TaxRate`, `CourtesyVehicle` and the identities to the reader, with the
+throw sites listed.
+
+**Nothing noticed for two modules** because nothing had asked a value object to refuse something on
+the far side of an HTTP boundary. Inside a unit test, `throws(\InvalidArgumentException::class, ...)`
+passes and looks correct. It is only when `ProblemDetailsMapper` asks for a `failureCode()` and finds
+no `CarriesContext` that the omission becomes a 500.
+
+The fix is mechanical: each identity gets a leaf on the existing `InvalidWorkshopInput` branch, a
+kebab-case code, and a line in the catalogue — which Lesson 4.4's exhaustiveness check will demand
+anyway. Perhaps four hours for all of them.
+
+**The general lesson is the one worth keeping**: a gap of this kind is invisible from inside any
+single lesson, and an end-to-end assembly is what finds it. That is what a capstone is for, and it is
+why "we will integrate at the end" is such an expensive plan.
+
+**G6.10** Give them **Lesson 5.1's rung 4**: an exception tree and a boundary mapper.
+
+Why: it is the cheapest large improvement available, because an exception tree has **no opinion about
+persistence**. It works from an Eloquent model, a Doctrine entity or a raw array. No schema change, no
+migration, no rewrite, and the capstone's own checks prove the point — a problem body produced from an
+Active Record model is byte-identical to one produced from a domain aggregate.
+
+Why not the capstone: because it is rung 5, it assumes a domain layer that does not exist there, and
+starting with it in a codebase with no characterisation tests is a rewrite wearing a plan. Lesson 5.2
+is the path, and it starts at the invariant that is generating incidents — not at the most
+interesting one.
+
+And Module 0 first, always: if the schema is the model, none of this applies and saying so is the
+more useful advice.
+
+</details>
+
+---
+
+*That is every gate. If you have taken all seven closed-book, you know this material.*

@@ -7,16 +7,17 @@
 
 ## The result
 
-Re-verified after each lesson lands. As of Lesson 4.4 — Modules 0 to 4 complete:
+Re-verified after each lesson lands. As of the capstone — the course is complete:
 
 | Check | Result |
 |-------|--------|
 | PHP version | 8.5.7 |
 | Language-feature probes | **10 / 10** — including `clone($obj, [...])`, static asymmetric visibility, `#[\NoDiscard]` |
-| Files parsing | **182 / 182** |
-| Reference solutions passing their own acceptance checks | **16 / 16** |
-| Earlier lesson specs still passing against the newest code | **16 / 16** |
-| Examples running to exit code 0 | **52 / 52** |
+| Files parsing | **see the run** |
+| Reference solutions passing their own acceptance checks | **19 / 19** |
+| Earlier lesson specs still passing against the newest code | **19 / 19** |
+| Examples running to exit code 0 | all of them |
+| Domain files scanned for infrastructural imports | **87, clean** |
 | `check.php` | stops correctly at Lesson 0.1 |
 
 No warnings. `composer install` has been run — Module 3 is the first that needs it, and

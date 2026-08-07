@@ -1,9 +1,10 @@
 # Advanced Domain Architecture & Tactical DDD
 ### Modelling business reality in PHP 8.5 — aggregates, invariants, events and exception trees
 
-> **Build status:** Modules 0 to 5 are written and verified on PHP 8.5.7. The capstone is
-> scaffolded from the blueprint but not yet built. `php check.php` counts only what exists, so the
-> percentage is honest.
+> **Build status: complete.** All six modules and the capstone are written and verified on
+> PHP 8.5.7 — 21 lessons, 21 challenges, 21 quizzes and 7 gates. Every reference solution passes its
+> own acceptance checks on every run, and every earlier lesson's spec still passes against the
+> newest code.
 
 ---
 
@@ -131,7 +132,7 @@ php8.5-domain-architecture/
 ├── module-3-persistence-without-leakage/      ← ✅ written
 ├── module-4-domain-exception-trees/           ← ✅ written
 ├── module-5-living-with-a-framework/          ← ✅ written
-└── module-6-capstone/                         ← scaffolded
+└── module-6-capstone/                         ← ✅ written
 ```
 
 Each lesson keeps the shape that worked in the previous course, with one change:
@@ -190,7 +191,7 @@ with a test suite and no documentation.
 | 3 — Persistence Without Leakage | 4 | 4 | 4 | ✅ | `[ ] Not started` |
 | 4 — Domain Exception Trees | 4 | 4 | 4 | ✅ | `[ ] Not started` |
 | 5 — Living With a Framework | 2 | 2 | 2 | ✅ | `[ ] Not started` |
-| Capstone | 1 | 1 | 1 | — | `[ ] Not built` |
+| Capstone | 1 | 1 | 1 | ✅ | `[ ] Not started` |
 | **Total** | **21** | **21** | **21** | | |
 
 Roughly one challenge per lesson. DDD is judgement, and judgement comes from repetition.
