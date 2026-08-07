@@ -148,12 +148,12 @@ and it runs as step 5 of `php verify.php`.
 
 ## Module 3 — Persistence Without Leakage
 
-3.1 is built. 3.2 to 3.4 are not yet. **Run `composer install` before starting.**
+3.1 and 3.2 are built. 3.3 and 3.4 are not yet. **Run `composer install` before starting.**
 
 | Lesson | Read | Ran | Challenge | Quiz | Score | Date |
 |--------|:----:|:---:|:---------:|:----:|:-----:|------|
 | 3.1 Repository Interfaces Belong to the Domain | [ ] | [ ] | [ ] | [ ] | ` /20` | |
-| 3.2 The Mapping Problem ⭐ *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 3.2 The Mapping Problem ⭐ | [ ] | [ ] | [ ] | [ ] | ` /20` | |
 | 3.3 Querying Without Leaking *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
 | 3.4 Testing Persistence *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
 
@@ -164,6 +164,15 @@ and it runs as step 5 of `php verify.php`.
 | `domain/workshop/` | `JobCards.php` — the interface, in the workshop's words | [ ] |
 | `domain/workshop/` | `JobCardNotFound.php` | [ ] |
 | `infrastructure/` | `InMemoryJobCards.php` — **not** the domain | [ ] |
+
+**From 3.2** — additive changes to three classes four earlier lessons already specified:
+
+| Where | File | |
+|-------|------|---|
+| `domain/workshop/` | `LabourLine.php` · `PartLine.php` · `JobCard.php` — each gains `reconstitute()` | [ ] |
+| `infrastructure/` | `JobCardMapper.php` — flat rows in, aggregate out | [ ] |
+
+`php regression.php` is the check that matters for 3.2.
 
 `infrastructure/` is git-ignored exactly like `domain/workshop/`. It has its own README.
 

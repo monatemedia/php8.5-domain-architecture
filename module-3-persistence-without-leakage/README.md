@@ -1,10 +1,10 @@
 # Module 3 — Persistence Without Leakage
-> Lesson 3.1 is built. 3.2 to 3.4 are planned.
+> Lessons 3.1 and 3.2 are built. 3.3 and 3.4 are planned.
 
 | Lesson | Subject | |
 |--------|---------|---|
 | [3.1](lesson-3.1-repository-interfaces/) | Repository interfaces belong to the domain; the SQL never does | ✅ built |
-| 3.2 | The mapping problem — reconstituting a rich aggregate from flat storage ⭐ | — |
+| [3.2](lesson-3.2-the-mapping-problem/) ⭐ | The mapping problem — reconstituting a rich aggregate from flat storage | ✅ built |
 | 3.3 | Querying without leaking — read models, and a first honest look at CQRS | — |
 | 3.4 | Testing persistence — the contract test, run against both implementations | — |
 
@@ -38,7 +38,7 @@ purpose.
 | Lesson | New |
 |--------|-----|
 | 3.1 | `domain/workshop/JobCards.php`, `JobCardNotFound.php` · `infrastructure/InMemoryJobCards.php` |
-| 3.2 | planned |
+| 3.2 | `reconstitute()` on `LabourLine`, `PartLine`, `JobCard` · `infrastructure/JobCardMapper.php` |
 | 3.3 | planned |
 | 3.4 | planned |
 

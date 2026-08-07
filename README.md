@@ -2,7 +2,7 @@
 ### Modelling business reality in PHP 8.5 — aggregates, invariants, events and exception trees
 
 > **Build status:** Modules 0 and 1 are written and verified on PHP 8.5.7, as is all of Module 2 and
-> Lesson 3.1. The rest of Modules 3–6 is scaffolded from the blueprint but not yet built. `php check.php`
+> Lessons 3.1 and 3.2. The rest of Modules 3–6 is scaffolded from the blueprint but not yet built. `php check.php`
 > counts only what exists, so the percentage is honest.
 
 ---
@@ -128,7 +128,7 @@ php8.5-domain-architecture/
 ├── module-0-when-and-when-not/      ← ✅ written
 ├── module-1-domain-modelling/       ← ✅ written
 ├── module-2-aggregates-and-consistency/       ← ✅ written
-├── module-3-persistence-without-leakage/      ← 3.1 written
+├── module-3-persistence-without-leakage/      ← 3.1, 3.2 written
 ├── module-4-domain-exception-trees/           ← scaffolded
 ├── module-5-living-with-a-framework/          ← scaffolded
 └── module-6-capstone/                         ← scaffolded
