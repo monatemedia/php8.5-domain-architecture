@@ -2,8 +2,20 @@
 declare(strict_types=1);
 
 /**
- * run-tests.php — PHPUnit runner for the modules that use it
- * ===========================================================
+ * run-tests.php — PHPUnit runner, for tests you add
+ * ==================================================
+ *
+ * THE COURSE SHIPS NO PHPUNIT TEST FILES. Run this today and it will correctly
+ * report that it found nothing.
+ *
+ * Every challenge is judged by assertions in `challenge/checks.php`, including
+ * Lesson 3.4, which is about testing persistence and does its contract test in
+ * the same harness as everything else. One mechanism that runs on every
+ * `verify.php` is worth more than two that each cover half the course.
+ *
+ * This file is kept because the machinery below is not obvious and you will
+ * want it the moment you write a test of your own — see the two notes on
+ * process isolation and file naming.
  *
  *     php run-tests.php                # every test file in the course
  *     php run-tests.php 3.4            # just Lesson 3.4

@@ -114,7 +114,7 @@ php8.5-domain-architecture/
 ├── check.php                        ← where am I?
 ├── verify.php                       ← is the course intact?
 ├── regression.php                   ← does the newest code still satisfy every earlier lesson?
-├── run-tests.php                    ← PHPUnit runner (Module 3 onwards)
+├── run-tests.php                    ← PHPUnit runner, for tests YOU add (see below)
 ├── index.php                        ← cover page, if you point a Herd site here
 ├── composer.json · phpunit.xml
 │
@@ -148,6 +148,19 @@ lesson-X.Y-name/
 │   └── solution/      ← the reference implementation
 └── quiz/QUIZ.md       ← answer key at the bottom
 ```
+
+### On `run-tests.php`, and why it runs nothing
+
+The course ships **no PHPUnit test files.** Every challenge — including Lesson 3.4, which is about
+testing persistence — is judged by assertions in `checks.php`, because one mechanism that runs on
+every `verify.php` is worth more than two that each cover half the course.
+
+`run-tests.php` is a working runner and `phpunit.xml` is a working config, both kept for tests **you**
+write. It gives every file its own process, which this course needs: lessons deliberately reuse class
+names, and a single PHPUnit run over all of them dies with *"Cannot declare class JobCard"*.
+
+Run it today and it will correctly report that it found nothing. That is not a broken tool; it is a
+tool with no work yet.
 
 **The change is `checks.php`.** The previous course judged your work by comparing printed text
 against an expected-output block written by hand — which failed in both directions, marking correct
@@ -205,7 +218,7 @@ Roughly one challenge per lesson. DDD is judgement, and judgement comes from rep
 | PHP | **8.5** — verified on 8.5.7. Degrades on 8.4: three examples that demonstrate 8.5 syntax will not parse, and `#[\NoDiscard]` goes inert. Below 8.4, nothing loads. |
 | Runtime | Laravel Herd, CLI only. Nothing is served over HTTP. |
 | Location | `~/Herd/php8.5-domain-architecture` |
-| Dependencies | None for Modules 0–2. PHPUnit from Module 3; Slim 4 + PHP-DI 7 for the capstone. |
+| Dependencies | None for Modules 0–2. `pdo_sqlite` from Module 3; Slim 4 + PHP-DI 7 for the capstone. PHPUnit is installed but the course ships no suites — see below. |
 | Domain layer | **Zero framework dependencies.** Enforced by a test, not by good intentions. |
 
 If `php check.php` reports the wrong PHP version, check Herd's **global** override as well as the
