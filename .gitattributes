@@ -1,0 +1,33 @@
+# Line endings
+# ============
+#
+# Everything is stored with LF in the repository AND checked out with LF, on
+# every platform. That is what silences the "LF will be replaced by CRLF" wall
+# of warnings, and it is the right call for this repository specifically:
+#
+#   - The course is driven from Git Bash and Herd's CLI, both of which want LF.
+#   - `git-setup.sh` and any future shell script BREAK with CRLF endings. Bash
+#     reads the trailing \r as part of the command and reports errors like
+#     `$'\r': command not found`, which is a genuinely confusing failure for
+#     somebody who has just cloned the repo.
+#   - PHP itself is indifferent to line endings, so nothing is lost.
+#
+# The one thing to know: Windows Notepad renders LF-only files as a single long
+# line. Any real editor — VS Code, PhpStorm, Sublime, vim — is fine.
+
+* text=auto eol=lf
+
+# Shell scripts must be LF. Stated separately so that the rule survives anyone
+# relaxing the line above.
+*.sh text eol=lf
+
+# Binary, never touched
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.pdf  binary
+*.zip  binary
+*.sqlite  binary
+*.sqlite3 binary
+*.db      binary
