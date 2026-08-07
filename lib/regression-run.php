@@ -48,6 +48,14 @@ if (!is_file($checks)) {
     exit(2);
 }
 
+// Modules 0 to 2 need no vendor directory at all, which is a point those
+// modules make deliberately rather than an accident. From Module 3 it exists,
+// and the capstone's spec names Slim and PHP-DI — so load it when it is there
+// and say nothing when it is not.
+if (is_file($root . '/vendor/autoload.php')) {
+    require_once $root . '/vendor/autoload.php';
+}
+
 require_once $root . '/lib/acceptance.php';
 require_once $root . '/lib/autoload-domain.php';
 
