@@ -1,9 +1,9 @@
 # Advanced Domain Architecture & Tactical DDD
 ### Modelling business reality in PHP 8.5 — aggregates, invariants, events and exception trees
 
-> **Build status:** Modules 0 and 1 are written and verified on PHP 8.5.7, as is all of Module 2 and
-> Lessons 3.1 and 3.2. The rest of Modules 3–6 is scaffolded from the blueprint but not yet built. `php check.php`
-> counts only what exists, so the percentage is honest.
+> **Build status:** Modules 0 and 1 are written and verified on PHP 8.5.7, as are Modules 2 and 3
+> in full. Modules 4–6 are scaffolded from the blueprint but not yet built. `php check.php` counts
+> only what exists, so the percentage is honest.
 
 ---
 
@@ -128,7 +128,7 @@ php8.5-domain-architecture/
 ├── module-0-when-and-when-not/      ← ✅ written
 ├── module-1-domain-modelling/       ← ✅ written
 ├── module-2-aggregates-and-consistency/       ← ✅ written
-├── module-3-persistence-without-leakage/      ← 3.1, 3.2 written
+├── module-3-persistence-without-leakage/      ← ✅ written
 ├── module-4-domain-exception-trees/           ← scaffolded
 ├── module-5-living-with-a-framework/          ← scaffolded
 └── module-6-capstone/                         ← scaffolded
@@ -187,7 +187,7 @@ with a test suite and no documentation.
 | 0 — When and When Not | 2 | 2 | 2 | ✅ | `[ ] Not started` |
 | 1 — Domain Modelling | 4 | 4 | 4 | ✅ | `[ ] Not started` |
 | 2 — Aggregates & Consistency | 4 | 4 | 4 | ✅ | `[ ] Not started` |
-| 3 — Persistence Without Leakage | 4 | 4 | 4 | — | `[ ] Not built` |
+| 3 — Persistence Without Leakage | 4 | 4 | 4 | ✅ | `[ ] Not started` |
 | 4 — Domain Exception Trees | 4 | 4 | 4 | — | `[ ] Not built` |
 | 5 — Living With a Framework | 2 | 2 | 2 | — | `[ ] Not built` |
 | Capstone | 1 | 1 | 1 | — | `[ ] Not built` |

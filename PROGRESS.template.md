@@ -148,14 +148,14 @@ and it runs as step 5 of `php verify.php`.
 
 ## Module 3 — Persistence Without Leakage
 
-3.1 and 3.2 are built. 3.3 and 3.4 are not yet. **Run `composer install` before starting.**
+All four lessons are built. **Run `composer install` before starting.**
 
 | Lesson | Read | Ran | Challenge | Quiz | Score | Date |
 |--------|:----:|:---:|:---------:|:----:|:-----:|------|
 | 3.1 Repository Interfaces Belong to the Domain | [ ] | [ ] | [ ] | [ ] | ` /20` | |
 | 3.2 The Mapping Problem ⭐ | [ ] | [ ] | [ ] | [ ] | ` /20` | |
-| 3.3 Querying Without Leaking *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
-| 3.4 Testing Persistence *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 3.3 Querying Without Leaking | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 3.4 Testing Persistence | [ ] | [ ] | [ ] | [ ] | ` /20` | |
 
 **From 3.1** — and note the second directory, which is new:
 
@@ -173,6 +173,26 @@ and it runs as step 5 of `php verify.php`.
 | `infrastructure/` | `JobCardMapper.php` — flat rows in, aggregate out | [ ] |
 
 `php regression.php` is the check that matters for 3.2.
+
+**From 3.3** — and note where it does *not* go:
+
+| Where | File | |
+|-------|------|---|
+| `infrastructure/` | `JobCardSummary.php` — a read model, anemic on purpose | [ ] |
+| `infrastructure/` | `JobCardSummaryQuery.php` — a query service | [ ] |
+| `domain/workshop/` | **nothing.** A read model is not a domain concept. | — |
+
+**From 3.4:**
+
+| Where | File | |
+|-------|------|---|
+| `infrastructure/` | `SqliteJobCards.php` — the second implementation | [ ] |
+
+**Module 3 gate — `GATES.md` § Gate 3.** Book shut.
+
+- [ ] Part 1 — 4 prompts on Module 3
+- [ ] Part 2 — carried forward from **Modules 1 and 2** — anemic models, derived totals
+- [ ] Every gap logged in *Notes & Sticking Points*
 
 `infrastructure/` is git-ignored exactly like `domain/workshop/`. It has its own README.
 

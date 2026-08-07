@@ -1,12 +1,12 @@
 # Module 3 — Persistence Without Leakage
-> Lessons 3.1 and 3.2 are built. 3.3 and 3.4 are planned.
+> **Complete.** All four lessons are built and verified.
 
 | Lesson | Subject | |
 |--------|---------|---|
 | [3.1](lesson-3.1-repository-interfaces/) | Repository interfaces belong to the domain; the SQL never does | ✅ built |
 | [3.2](lesson-3.2-the-mapping-problem/) ⭐ | The mapping problem — reconstituting a rich aggregate from flat storage | ✅ built |
-| 3.3 | Querying without leaking — read models, and a first honest look at CQRS | — |
-| 3.4 | Testing persistence — the contract test, run against both implementations | — |
+| [3.3](lesson-3.3-querying-without-leaking/) | Querying without leaking — read models, and a first honest look at CQRS | ✅ built |
+| [3.4](lesson-3.4-testing-persistence/) | Testing persistence — the contract test, run against both implementations | ✅ built |
 
 **First module that needs Composer.** Run `composer install` before starting. 3.4 also needs the
 `pdo_sqlite` extension; `php verify.php` checks for it.
@@ -39,8 +39,8 @@ purpose.
 |--------|-----|
 | 3.1 | `domain/workshop/JobCards.php`, `JobCardNotFound.php` · `infrastructure/InMemoryJobCards.php` |
 | 3.2 | `reconstitute()` on `LabourLine`, `PartLine`, `JobCard` · `infrastructure/JobCardMapper.php` |
-| 3.3 | planned |
-| 3.4 | planned |
+| 3.3 | `infrastructure/JobCardSummary.php`, `infrastructure/JobCardSummaryQuery.php` — **nothing in the domain** |
+| 3.4 | `infrastructure/SqliteJobCards.php` — and the contract, written once and run twice |
 
 **`infrastructure/` is created in 3.1** — the first directory in this course that is deliberately
 not the domain. It is git-ignored like `domain/workshop/`, and it has its own README.
