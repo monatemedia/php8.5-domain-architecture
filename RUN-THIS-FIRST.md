@@ -7,20 +7,20 @@
 
 ## The result
 
-Re-verified after each lesson lands. As of Lesson 2.4 — Module 2 complete:
+Re-verified after each lesson lands. As of Lesson 3.1:
 
 | Check | Result |
 |-------|--------|
 | PHP version | 8.5.7 |
 | Language-feature probes | **10 / 10** — including `clone($obj, [...])`, static asymmetric visibility, `#[\NoDiscard]` |
-| Files parsing | **92 / 92** |
-| Reference solutions passing their own acceptance checks | **8 / 8** |
-| Earlier lesson specs still passing against the newest code | **8 / 8** |
-| Examples running to exit code 0 | **31 / 31** |
+| Files parsing | **100 / 100** |
+| Reference solutions passing their own acceptance checks | **9 / 9** |
+| Earlier lesson specs still passing against the newest code | **9 / 9** |
+| Examples running to exit code 0 | **34 / 34** |
 | `check.php` | stops correctly at Lesson 0.1 |
 
-The only warning is `vendor/` not present, which is correct: Modules 0, 1 and 2 have no
-dependencies at all, deliberately. Run `composer install` before Module 3.
+No warnings. `composer install` has been run — Module 3 is the first that needs it, and
+`pdo_sqlite` is present for Lesson 3.4's integration tests.
 
 ---
 
@@ -33,7 +33,7 @@ had never matched reality, fabricated syntax for a PHP 8.5 feature. Every one of
 because nothing ever ran the code.
 
 So the first thing that happened here was that it ran, and it has been re-run after every lesson
-since. Three things came out of that, and all three are worth recording.
+since. Four things came out of that, and all four are worth recording.
 
 ### 1. A false green in `verify.php` itself
 
@@ -64,7 +64,23 @@ lesson's `checks.php` run against the result, one process per lesson. It is step
 Both additive changes turned out to be genuinely additive. That was luck plus care, and neither is a
 test.
 
-### 3. A version assumption that was too absolute
+### 3. A check that could not tell a dependency from a sentence
+
+Lesson 3.1 asserts that no domain file references the `Infrastructure` namespace. The first version
+searched the raw source — and failed its own reference solution, because the doc block on
+`JobCards` explains the inversion in prose: *"the domain declares what it needs; Infrastructure
+supplies it."*
+
+Describing the rule is not breaking it. A check that greps a whole file punishes a class for being
+documented, and the fix is to strip comments first — which `no_float_in()` had been doing since
+Lesson 1.2 for exactly the same reason, and which the new check simply failed to reuse.
+
+Both now share `class_source_without_comments()` in `lib/acceptance.php`.
+
+That one cost a single `verify.php` run, which is the cheapest a course bug has ever been found in
+this project. It would have shipped in the previous course.
+
+### 4. A version assumption that was too absolute
 
 The first run was on 8.4.22, because Herd's **global** PHP override silently wins over the per-site
 setting. The harness treated that as six failures. In fact only three files were affected — all

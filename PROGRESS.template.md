@@ -148,14 +148,24 @@ and it runs as step 5 of `php verify.php`.
 
 ## Module 3 — Persistence Without Leakage
 
-*Not built yet.*
+3.1 is built. 3.2 to 3.4 are not yet. **Run `composer install` before starting.**
 
 | Lesson | Read | Ran | Challenge | Quiz | Score | Date |
 |--------|:----:|:---:|:---------:|:----:|:-----:|------|
 | 3.1 Repository Interfaces Belong to the Domain | [ ] | [ ] | [ ] | [ ] | ` /20` | |
-| 3.2 The Mapping Problem ⭐ | [ ] | [ ] | [ ] | [ ] | ` /20` | |
-| 3.3 Querying Without Leaking | [ ] | [ ] | [ ] | [ ] | ` /20` | |
-| 3.4 Testing Persistence | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 3.2 The Mapping Problem ⭐ *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 3.3 Querying Without Leaking *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 3.4 Testing Persistence *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+
+**From 3.1** — and note the second directory, which is new:
+
+| Where | File | |
+|-------|------|---|
+| `domain/workshop/` | `JobCards.php` — the interface, in the workshop's words | [ ] |
+| `domain/workshop/` | `JobCardNotFound.php` | [ ] |
+| `infrastructure/` | `InMemoryJobCards.php` — **not** the domain | [ ] |
+
+`infrastructure/` is git-ignored exactly like `domain/workshop/`. It has its own README.
 
 ---
 

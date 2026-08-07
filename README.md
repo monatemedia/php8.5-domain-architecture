@@ -1,8 +1,8 @@
 # Advanced Domain Architecture & Tactical DDD
 ### Modelling business reality in PHP 8.5 — aggregates, invariants, events and exception trees
 
-> **Build status:** Modules 0 and 1 are written and verified on PHP 8.5.7, as is all of Module 2.
-> Modules 3–6 are scaffolded from the blueprint but not yet built. `php check.php`
+> **Build status:** Modules 0 and 1 are written and verified on PHP 8.5.7, as is all of Module 2 and
+> Lesson 3.1. The rest of Modules 3–6 is scaffolded from the blueprint but not yet built. `php check.php`
 > counts only what exists, so the percentage is honest.
 
 ---
@@ -67,8 +67,9 @@ php check.php          # environment, integrity, and where you are
 `check.php` walks the lessons in order and stops at the first unsolved one, so it always gives you
 exactly one next action. Run it whenever you are unsure what to do next.
 
-You do **not** need `composer install` yet. Modules 0, 1 and 2 are plain PHP with no dependencies
-at all — which is the point being made, not an accident. Composer is needed from Module 3.
+You do **not** need `composer install` for Modules 0, 1 and 2 — they are plain PHP with no
+dependencies at all, which is the point being made rather than an accident. Run it before Module 3,
+which also wants the `pdo_sqlite` extension. `php verify.php` checks for both.
 
 Then, in this order:
 
@@ -89,6 +90,7 @@ Two things are not tracked, because they belong to whoever is working through it
 | Yours, git-ignored | Why |
 |--------------------|-----|
 | `domain/workshop/*.php` | your answers to the code challenges. If a finished one were committed, a fresh clone would report Module 1 complete before its owner had opened a file. |
+| `infrastructure/*.php` | the same, for the non-domain half — from Lesson 3.1 onwards. |
 | `PROGRESS.md` | your ticks, scores and sticking points. The template is tracked instead. |
 
 Grading is unaffected by this. `check.php` runs *your* `domain/workshop/` against the course's
@@ -117,14 +119,16 @@ php8.5-domain-architecture/
 │
 ├── lib/
 │   ├── acceptance.php               ← how a challenge is judged. Read this early.
-│   └── autoload-domain.php          ← nine-line PSR-4 autoloader
+│   ├── autoload-domain.php          ← a small PSR-4 autoloader: Workshop\ and Infrastructure\
+│   └── regression-run.php           ← used by regression.php, one lesson per process
 │
-├── domain/workshop/                 ← YOUR codebase. Grows from Module 1 to the capstone.
+├── domain/workshop/                 ← YOUR domain layer. Grows from Module 1 to the capstone.
+├── infrastructure/                  ← YOUR non-domain code. Created in Lesson 3.1.
 │
 ├── module-0-when-and-when-not/      ← ✅ written
 ├── module-1-domain-modelling/       ← ✅ written
 ├── module-2-aggregates-and-consistency/       ← ✅ written
-├── module-3-persistence-without-leakage/      ← scaffolded
+├── module-3-persistence-without-leakage/      ← 3.1 written
 ├── module-4-domain-exception-trees/           ← scaffolded
 ├── module-5-living-with-a-framework/          ← scaffolded
 └── module-6-capstone/                         ← scaffolded
