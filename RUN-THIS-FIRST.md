@@ -7,16 +7,16 @@
 
 ## The result
 
-Re-verified after each lesson lands. As of Lesson 2.2:
+Re-verified after each lesson lands. As of Lesson 2.4 — Module 2 complete:
 
 | Check | Result |
 |-------|--------|
 | PHP version | 8.5.7 |
 | Language-feature probes | **10 / 10** — including `clone($obj, [...])`, static asymmetric visibility, `#[\NoDiscard]` |
-| Files parsing | **72 / 72** |
-| Reference solutions passing their own acceptance checks | **6 / 6** |
-| Earlier lesson specs still passing against the newest code | **6 / 6** |
-| Examples running to exit code 0 | **20 / 20** |
+| Files parsing | **92 / 92** |
+| Reference solutions passing their own acceptance checks | **8 / 8** |
+| Earlier lesson specs still passing against the newest code | **8 / 8** |
+| Examples running to exit code 0 | **31 / 31** |
 | `check.php` | stops correctly at Lesson 0.1 |
 
 The only warning is `vendor/` not present, which is correct: Modules 0, 1 and 2 have no
@@ -32,8 +32,8 @@ remediation bill: reference solutions that failed their own assertions, expected
 had never matched reality, fabricated syntax for a PHP 8.5 feature. Every one of those survived
 because nothing ever ran the code.
 
-So the first thing that happened here was that it ran. Two things came out of it, and both are worth
-recording.
+So the first thing that happened here was that it ran, and it has been re-run after every lesson
+since. Three things came out of that, and all three are worth recording.
 
 ### 1. A false green in `verify.php` itself
 
@@ -93,7 +93,7 @@ class**. Between them: a solution that fails its own assertions cannot survive a
 lesson that quietly breaks an earlier one cannot either.
 
 The examples are only syntax-checked by `verify.php`, because they print prose rather than
-assertions. To execute all fourteen:
+assertions. To execute all of them:
 
 ```bash
 for f in module-*/lesson-*/examples/*.php; do

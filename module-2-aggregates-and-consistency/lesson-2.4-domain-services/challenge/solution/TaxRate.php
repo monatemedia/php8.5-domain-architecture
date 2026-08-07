@@ -113,7 +113,7 @@ final readonly class TaxRate
     public function applyTo(Money $amount): Money
     {
         $tax = intdiv(
-            $amount->amountMinor() * $this->basisPoints + (self::BASIS_POINTS_PER_UNIT / 2),
+            $amount->amountMinor() * $this->basisPoints + intdiv(self::BASIS_POINTS_PER_UNIT, 2),
             self::BASIS_POINTS_PER_UNIT
         );
 

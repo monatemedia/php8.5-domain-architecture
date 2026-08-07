@@ -107,16 +107,16 @@ identifiers arrive in Module 2, where `JobCard` becomes an aggregate root over t
 
 ## Module 2 — Aggregates & Consistency
 
-2.1 and 2.2 are built. 2.3 and 2.4 are not yet.
+All four lessons are built.
 
 | Lesson | Read | Ran | Challenge | Quiz | Score | Date |
 |--------|:----:|:---:|:---------:|:----:|:-----:|------|
 | 2.1 Aggregate Roots & Boundaries ⭐ | [ ] | [ ] | [ ] | [ ] | ` /20` | |
 | 2.2 Transactions: What a Boundary Wraps ⭐ | [ ] | [ ] | [ ] | [ ] | ` /20` | |
-| 2.3 Domain Events *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
-| 2.4 Domain Services *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 2.3 Domain Events | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 2.4 Domain Services | [ ] | [ ] | [ ] | [ ] | ` /20` | |
 
-**Your domain layer after 2.1 and 2.2** — eleven more files:
+**Your domain layer after Module 2** — sixteen more files:
 
 | From | File | What it enforces |
 |:----:|------|------------------|
@@ -129,12 +129,20 @@ identifiers arrive in Module 2, where `JobCard` becomes an aggregate root over t
 | 2.1 | `JobCard.php` | I5–I9 — the first aggregate root | [ ] |
 | 2.2 | `CourtesyVehicleId.php` | identity, not the reusable fleet code | [ ] |
 | 2.2 | `CourtesyFleet.php` | **I10** — the second aggregate root | [ ] |
+| 2.3 | `DomainEvent.php`, `RecordsDomainEvents.php` | record, do not dispatch | [ ] |
+| 2.3 | `JobCardOpened.php`, `JobCardCompleted.php`, `JobCardInvoiced.php` | facts about the past | [ ] |
+| 2.4 | `TaxRate.php` | basis points, integer rounding, no float | [ ] |
+| 2.4 | `CourtesyVehicleEligibility.php` | the one domain service — its policy passed in | [ ] |
 
-Plus one additive change each to `LabourLine.php` (2.1) and `CourtesyVehicle.php` (2.2). Neither may
-break the lesson that created it — `php regression.php` is what proves that, and it runs as step 5
-of `php verify.php`.
+Plus one additive change each to `LabourLine.php` (2.1), `CourtesyVehicle.php` (2.2) and
+`JobCard.php` (2.3). None may break the lesson that created it — `php regression.php` proves that,
+and it runs as step 5 of `php verify.php`.
 
-**Module 2 gate — `GATES.md` § Gate 2.** *(Written when 2.3 and 2.4 are.)*
+**Module 2 gate — `GATES.md` § Gate 2.** Book shut.
+
+- [ ] Part 1 — 4 prompts on Module 2
+- [ ] Part 2 — carried forward from **Modules 0 and 1** — Rule 6, derived totals
+- [ ] Every gap logged in *Notes & Sticking Points*
 
 ---
 

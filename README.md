@@ -1,8 +1,8 @@
 # Advanced Domain Architecture & Tactical DDD
 ### Modelling business reality in PHP 8.5 — aggregates, invariants, events and exception trees
 
-> **Build status:** Modules 0 and 1 are written and verified on PHP 8.5.7, as are Lessons 2.1 to
-> 2.3. The rest of Modules 2–6 is scaffolded from the blueprint but not yet built. `php check.php`
+> **Build status:** Modules 0 and 1 are written and verified on PHP 8.5.7, as is all of Module 2.
+> Modules 3–6 are scaffolded from the blueprint but not yet built. `php check.php`
 > counts only what exists, so the percentage is honest.
 
 ---
@@ -52,14 +52,15 @@ not to* is the more valuable half, and it is the half almost every DDD course om
 
 ## Start here
 
-> **Verified green on PHP 8.5.7.** 46/46 files parse, 10/10 language probes pass, all four
-> reference solutions pass their own acceptance checks, all fourteen examples run. The record —
-> including the two bugs the first run exposed — is in [`RUN-THIS-FIRST.md`](RUN-THIS-FIRST.md).
+> **Verified green on PHP 8.5.7**, and re-verified after every lesson. Every file parses, every
+> language probe passes, every reference solution passes its own acceptance checks, and every
+> earlier lesson's spec still passes against the newest code. The record — including the three bugs
+> the verification runs exposed — is in [`RUN-THIS-FIRST.md`](RUN-THIS-FIRST.md).
 
 ```bash
 cd ~/Herd/php8.5-domain-architecture
 
-php verify.php         # is the course sound? runs every reference solution
+php verify.php         # six steps: parse, probe, solutions, regression
 php check.php          # environment, integrity, and where you are
 ```
 
@@ -122,7 +123,7 @@ php8.5-domain-architecture/
 │
 ├── module-0-when-and-when-not/      ← ✅ written
 ├── module-1-domain-modelling/       ← ✅ written
-├── module-2-aggregates-and-consistency/       ← scaffolded
+├── module-2-aggregates-and-consistency/       ← ✅ written
 ├── module-3-persistence-without-leakage/      ← scaffolded
 ├── module-4-domain-exception-trees/           ← scaffolded
 ├── module-5-living-with-a-framework/          ← scaffolded
@@ -181,7 +182,7 @@ with a test suite and no documentation.
 |--------|:-------:|:----------:|:-------:|:-----:|--------|
 | 0 — When and When Not | 2 | 2 | 2 | ✅ | `[ ] Not started` |
 | 1 — Domain Modelling | 4 | 4 | 4 | ✅ | `[ ] Not started` |
-| 2 — Aggregates & Consistency | 4 | 4 | 4 | — | `[ ] Not built` |
+| 2 — Aggregates & Consistency | 4 | 4 | 4 | ✅ | `[ ] Not started` |
 | 3 — Persistence Without Leakage | 4 | 4 | 4 | — | `[ ] Not built` |
 | 4 — Domain Exception Trees | 4 | 4 | 4 | — | `[ ] Not built` |
 | 5 — Living With a Framework | 2 | 2 | 2 | — | `[ ] Not built` |

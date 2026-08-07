@@ -194,4 +194,105 @@ value object gives a business concept a name and a home, which means the busines
 
 ---
 
-*Gates for Modules 2 onwards are written as those modules are built.*
+# Gate 2 — After Module 2
+
+## Part 1 — Module 2
+
+**G2.1** Define an aggregate. Then say what the definition *excludes*, because the two most common
+wrong answers are both plausible.
+
+**G2.2** Invariant I10 — a courtesy vehicle is on at most one open job card at any time. Your
+`CourtesyVehicle` refuses a second allocation. Explain precisely why that is not I10, and what
+`CourtesyFleet` added that fixed it.
+
+**G2.3** Why does an aggregate *record* events rather than dispatch them? Give the obvious reason
+and the one that is worse.
+
+**G2.4** Name the four tests for a genuine domain service, and say which one most false positives
+fail.
+
+## Part 2 — Carried forward from Modules 0 and 1
+
+**G2.5** `CourtesyFleet` locks the whole fleet on every allocation, including cars nobody touched.
+Justify that using Rule 6, and say what would make the justification stop working.
+
+**G2.6** `JobCard::total()` is derived, and `LabourLine::total()` is derived, and Lesson 2.1 §6 says
+a real billing system would probably store the job card total. Reconcile those.
+
+---
+
+<details>
+<summary><strong>Gate 2 — answer key</strong> (open only after you have answered)</summary>
+
+**G2.1** The set of objects that must be correct **together, at the same instant, inside one
+transaction**.
+
+*What it excludes:* it is **not** "everything reachable from the root" — reachability is a property
+of your object graph, not of the business, and taking it as the definition gives you an aggregate
+the size of your model. It is also **not** "things that belong together conceptually" — a vehicle
+and its job cards belong together in conversation and are two aggregates. The question is only ever:
+*if these two changed a second apart, would the business be harmed?*
+
+**G2.2** `CourtesyVehicle` protects **one object in memory**. Load the same record twice — two
+requests, two repository calls, entirely ordinary — allocate each copy to a different job card, and
+save both. Every object obeyed its own rule and one car is promised to two customers.
+
+What the fleet added is **ownership, not a check**. It holds every vehicle, so there is exactly one
+instance of each, and Lesson 1.1's guard finally has something to run against. The check was never
+wrong; it had nothing to compare with. Saying "the fleet enforces I10" is slightly inaccurate — the
+vehicle still enforces it, and the fleet makes enforcement possible.
+
+**G2.3** *The obvious reason:* an aggregate holding a dispatcher has a dependency on infrastructure.
+It cannot be constructed without one, so every test, mapper and fixture needs one, and Rule 1 is
+broken.
+
+*The worse one:* handlers run **inside** the operation, before the transaction commits. If anything
+later rolls back, the job card is not invoiced — and the customer has already been emailed a bill
+and accounting has already been posted. The database rolled back; the outside world did not, and you
+cannot un-send an email. Recording means handlers only ever run for things that actually happened.
+
+**G2.4** (1) The business has a name for the operation. (2) It belongs to no single object. (3) It
+is stateless. (4) It works only on domain objects.
+
+**Test 4 catches most false positives.** Nearly everything people call a domain service turns out to
+load something, and the moment it does it is an application service — orchestration rather than
+domain logic, and it belongs outside `domain/`. Test 2 catches the rest: the operation usually
+belongs on an object that already exists.
+
+**G2.5** *The justification:* twelve courtesy vehicles and eight allocations a day. Contention
+requires two people clicking within the same few milliseconds, which at that volume happens roughly
+never, and the whole aggregate loads in under a millisecond. In exchange, I10 is instantaneous and
+provable — no reconciliation job, no compensation, no window, and nobody ever rings a customer back.
+Rule 6 cuts both ways: the ceremony of an eventually-consistent design must also be paid for, and
+here it buys nothing.
+
+*What stops it working:* volume. Somewhere between two hundred and a few thousand vehicles, and it
+depends more on allocations per hour at peak than on fleet size. The signal is contention — two
+allocations waiting on each other during the 9am rush.
+
+The important part: that number is a fact about the business you have to go and ask for, and a
+design that outgrows it is not a past mistake. Treating it as one is how teams learn never to choose
+the simple thing.
+
+**G2.6** They are not in tension, because *what makes deriving safe* is different from *whether
+deriving is safe in general*.
+
+Both totals are safe to derive **today**, for one reason: `Money` is immutable and every line holds
+its own copy of the rate it was created with. Recomputing in five years gives the same answer,
+because the inputs are frozen. The safety comes from Lesson 1.2, not from deriving.
+
+What a real billing system worries about is the **calculation** becoming historical — a new tax
+treatment, a different rounding rule. Then a derived total silently re-prices last year's invoices,
+and nothing fails. At that point the computed total must be stored alongside the parts, and the
+drift risk accepted knowingly.
+
+Note what the course already does about it: `JobCardInvoiced` carries the total. The amount that was
+**billed** is captured at the moment of billing, so the accounting record is a fact about a moment
+even though the aggregate's own total is a fact about now. That is the compromise, and it is worth
+noticing that it was made in Lesson 2.3 rather than argued about in 2.1.
+
+</details>
+
+---
+
+*Gates for Modules 3 onwards are written as those modules are built.*

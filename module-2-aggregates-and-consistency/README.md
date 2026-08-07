@@ -1,12 +1,12 @@
 # Module 2 — Aggregates & Consistency
-> Lessons 2.1 to 2.3 are built. 2.4 is planned.
+> **Complete.** All four lessons are built and verified.
 
 | Lesson | Subject | |
 |--------|---------|---|
 | [2.1](lesson-2.1-aggregate-roots-and-boundaries/) ⭐ | Aggregate roots and boundaries — what must be consistent *together, right now* | ✅ built |
 | [2.2](lesson-2.2-transactions-and-consistency/) ⭐ | Transactions: what a boundary actually wraps; eventual consistency as a business decision | ✅ built |
 | [2.3](lesson-2.3-domain-events/) | Domain events — how aggregates tell the system what happened without knowing who listens | ✅ built |
-| 2.4 | Domain services — the narrow case, and how to tell one from an anemic model | — |
+| [2.4](lesson-2.4-domain-services/) | Domain services — the narrow case, and how to tell one from an anemic model | ✅ built |
 
 Turns `JobCard` into an aggregate root over the classes Module 1 builds, and takes on invariant
 **I10**, which nothing in Module 1 can enforce.
@@ -41,11 +41,12 @@ conversation with the workshop manager, and that is the lesson.
 | 2.1 | `Line`, `LineId`, `PartNumber`, `PartLine`, `JobCardStatus`, `JobCardId`, `AccountHolderId`, `JobCard` — plus one addition to `LabourLine` |
 | 2.2 | `CourtesyVehicleId`, `CourtesyFleet` — plus one addition to `CourtesyVehicle` |
 | 2.3 | `DomainEvent`, `RecordsDomainEvents`, `JobCardOpened`, `JobCardCompleted`, `JobCardInvoiced` — plus one addition to `JobCard` |
-| 2.4 | planned |
+| 2.4 | `TaxRate`, `CourtesyVehicleEligibility` — one value object and one domain service |
 
-Both built challenges end with the same unusual acceptance criterion: **an earlier lesson's checks
+Three of the four challenges end with the same unusual acceptance criterion: **an earlier lesson's checks
 must still pass afterwards.** 2.1 turns `LabourLine` from a value object into an entity; 2.2 gives
-`CourtesyVehicle` an identity. Both changes are purely additive — no existing signature moves. A
+`CourtesyVehicle` an identity; 2.3 makes `JobCard` record events. All three are purely additive —
+no existing signature moves. A
 course where finishing one lesson un-finishes an earlier one is a course nobody trusts.
 
 That constraint is not only pedagogical hygiene. Lesson 2.2 §8 is about the price it exacts:
