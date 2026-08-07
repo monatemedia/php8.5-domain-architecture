@@ -107,14 +107,34 @@ identifiers arrive in Module 2, where `JobCard` becomes an aggregate root over t
 
 ## Module 2 — Aggregates & Consistency
 
-*Not built yet.*
+2.1 and 2.2 are built. 2.3 and 2.4 are not yet.
 
 | Lesson | Read | Ran | Challenge | Quiz | Score | Date |
 |--------|:----:|:---:|:---------:|:----:|:-----:|------|
-| 2.1 Aggregate Roots & Boundaries | [ ] | [ ] | [ ] | [ ] | ` /20` | |
-| 2.2 Transactions: What a Boundary Wraps | [ ] | [ ] | [ ] | [ ] | ` /20` | |
-| 2.3 Domain Events | [ ] | [ ] | [ ] | [ ] | ` /20` | |
-| 2.4 Domain Services | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 2.1 Aggregate Roots & Boundaries ⭐ | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 2.2 Transactions: What a Boundary Wraps ⭐ | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 2.3 Domain Events *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+| 2.4 Domain Services *(not built)* | [ ] | [ ] | [ ] | [ ] | ` /20` | |
+
+**Your domain layer after 2.1 and 2.2** — eleven more files:
+
+| From | File | What it enforces |
+|:----:|------|------------------|
+| 2.1 | `Line.php` | the three-method contract both line types satisfy | [ ] |
+| 2.1 | `LineId.php` | identity for a line, so one can be removed | [ ] |
+| 2.1 | `PartNumber.php` | normalised, hyphens **kept** — unlike a registration | [ ] |
+| 2.1 | `PartLine.php` | quantity ≥ 1; total derived | [ ] |
+| 2.1 | `JobCardStatus.php` | I9 — the transition table, in one place | [ ] |
+| 2.1 | `JobCardId.php`, `AccountHolderId.php` | identity | [ ] |
+| 2.1 | `JobCard.php` | I5–I9 — the first aggregate root | [ ] |
+| 2.2 | `CourtesyVehicleId.php` | identity, not the reusable fleet code | [ ] |
+| 2.2 | `CourtesyFleet.php` | **I10** — the second aggregate root | [ ] |
+
+Plus one additive change each to `LabourLine.php` (2.1) and `CourtesyVehicle.php` (2.2). Neither may
+break the lesson that created it — `php regression.php` is what proves that, and it runs as step 5
+of `php verify.php`.
+
+**Module 2 gate — `GATES.md` § Gate 2.** *(Written when 2.3 and 2.4 are.)*
 
 ---
 

@@ -1,10 +1,10 @@
 # Module 2 — Aggregates & Consistency
-> Lesson 2.1 is built. 2.2 to 2.4 are planned.
+> Lessons 2.1 and 2.2 are built. 2.3 and 2.4 are planned.
 
 | Lesson | Subject | |
 |--------|---------|---|
 | [2.1](lesson-2.1-aggregate-roots-and-boundaries/) ⭐ | Aggregate roots and boundaries — what must be consistent *together, right now* | ✅ built |
-| 2.2 | Transactions: what a boundary actually wraps; eventual consistency as a business decision | — |
+| [2.2](lesson-2.2-transactions-and-consistency/) ⭐ | Transactions: what a boundary actually wraps; eventual consistency as a business decision | ✅ built |
 | 2.3 | Domain events — how aggregates tell the system what happened without knowing who listens | — |
 | 2.4 | Domain services — the narrow case, and how to tell one from an anemic model | — |
 
@@ -39,11 +39,16 @@ conversation with the workshop manager, and that is the lesson.
 | Lesson | New in `domain/workshop/` |
 |--------|---------------------------|
 | 2.1 | `Line`, `LineId`, `PartNumber`, `PartLine`, `JobCardStatus`, `JobCardId`, `AccountHolderId`, `JobCard` — plus one addition to `LabourLine` |
-| 2.2 | planned |
+| 2.2 | `CourtesyVehicleId`, `CourtesyFleet` — plus one addition to `CourtesyVehicle` |
 | 2.3 | planned |
 | 2.4 | planned |
 
-Lesson 2.1's challenge has an unusual final acceptance criterion: **Lesson 1.4's checks must still
-pass afterwards.** `LabourLine` changes from a value object into an entity, and it does so purely
-additively — its `create()` signature does not move. A course where finishing one lesson
-un-finishes an earlier one is a course nobody trusts.
+Both built challenges end with the same unusual acceptance criterion: **an earlier lesson's checks
+must still pass afterwards.** 2.1 turns `LabourLine` from a value object into an entity; 2.2 gives
+`CourtesyVehicle` an identity. Both changes are purely additive — no existing signature moves. A
+course where finishing one lesson un-finishes an earlier one is a course nobody trusts.
+
+That constraint is not only pedagogical hygiene. Lesson 2.2 §8 is about the price it exacts:
+`allocateTo()` still takes a `string` where it obviously wants a `JobCardId`, so the fleet converts
+in both directions on every call. The wart is left in, and the quiz asks you to argue that leaving
+it is the wrong call. Module 5 is that situation at a scale where the fix takes months.
