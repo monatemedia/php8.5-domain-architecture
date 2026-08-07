@@ -26,11 +26,13 @@
     "scripts": {
         "check": "php check.php",
         "verify": "php verify.php",
+        "regression": "php regression.php",
         "test": "php run-tests.php"
     },
     "scripts-descriptions": {
         "check": "Environment, course integrity, and how far through the lessons you are",
-        "verify": "Syntax-check every file, probe every 8.4/8.5 feature, run every reference solution",
+        "verify": "Syntax-check every file, probe every 8.4/8.5 feature, run every reference solution, and regress",
+        "regression": "Run every earlier lesson's spec against the newest version of every class",
         "test": "Run the PHPUnit suites, one process per file"
     }
 }

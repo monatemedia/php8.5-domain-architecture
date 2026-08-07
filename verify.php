@@ -326,7 +326,49 @@ if ($runners === []) {
 
 
 // ─────────────────────────────────────────────────────────────────────────────
-heading('5. Composer dependencies (needed from Module 3 onwards)');
+heading('5. Regression — does the latest code still satisfy every earlier lesson?');
+
+/**
+ * Step 4 proves each lesson is internally consistent: its own solution against
+ * its own checks. That is not the guarantee this course makes.
+ *
+ * Classes accumulate, and some lessons change earlier ones — 2.1 gives
+ * LabourLine an identity, 2.2 gives CourtesyVehicle one. The student has ONE
+ * copy of each class, so what actually matters is whether the NEWEST version
+ * still satisfies every EARLIER specification.
+ *
+ * Step 4 cannot see that: Lesson 1.1's runner loads Lesson 1.1's copy of
+ * CourtesyVehicle. regression.php loads the newest copy of everything and runs
+ * the old specs against it.
+ */
+if (!is_file($root . '/regression.php')) {
+    warn('regression.php not found — skipping the accumulation check.');
+} else {
+    [$rcRegression, $regressionOut] = shell($php . ' ' . escapeshellarg($root . '/regression.php'));
+
+    foreach (explode("\n", trim($regressionOut)) as $line) {
+        if (preg_match('/^\s{2}Lesson\s+(\S+)\s+(PASS|FAIL)\s*$/', $line, $m) === 1) {
+            $m[2] === 'PASS'
+                ? pass('Lesson ' . $m[1] . ' still passes against the latest code.')
+                : fail('Lesson ' . $m[1] . ' NO LONGER passes against the latest code.');
+        }
+    }
+
+    if ($rcRegression !== 0) {
+        echo "\n";
+        foreach (explode("\n", $regressionOut) as $line) {
+            echo '  ' . $line . "\n";
+        }
+        echo "\n";
+        echo "  A later lesson has broken an earlier lesson's contract. The fix belongs\n";
+        echo "  in the LATER lesson — the earlier specification is what is being\n";
+        echo "  protected. Run  php regression.php  for the detail.\n";
+    }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+heading('6. Composer dependencies (needed from Module 3 onwards)');
 
 $autoload = $root . '/vendor/autoload.php';
 if (!is_file($autoload)) {

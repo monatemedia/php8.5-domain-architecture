@@ -7,13 +7,16 @@
 
 ## The result
 
+Re-verified after each lesson lands. As of Lesson 2.2:
+
 | Check | Result |
 |-------|--------|
 | PHP version | 8.5.7 |
 | Language-feature probes | **10 / 10** — including `clone($obj, [...])`, static asymmetric visibility, `#[\NoDiscard]` |
-| Files parsing | **46 / 46** |
-| Reference solutions passing their own acceptance checks | **4 / 4** |
-| Examples running to exit code 0 | **14 / 14** |
+| Files parsing | **72 / 72** |
+| Reference solutions passing their own acceptance checks | **6 / 6** |
+| Earlier lesson specs still passing against the newest code | **6 / 6** |
+| Examples running to exit code 0 | **20 / 20** |
 | `check.php` | stops correctly at Lesson 0.1 |
 
 The only warning is `vendor/` not present, which is correct: Modules 0, 1 and 2 have no
@@ -44,7 +47,24 @@ only from 8.5.
 That bug was sitting in the one file whose job is to prevent false greens. It would never have been
 found by reading.
 
-### 2. A version assumption that was too absolute
+### 2. A regression test that was not testing regressions
+
+Lessons 2.1 and 2.2 each change a class an earlier lesson created — `LabourLine` gains an identity,
+then `CourtesyVehicle` does. Both challenges end with "re-run the earlier lesson's checks", and both
+times that was done by running the earlier lesson's `solution/run.php`.
+
+Which proved nothing. That runner registers the earlier lesson's **own** solution directory first,
+so it loaded the old copy of the class and confirmed that 1.1 satisfies 1.1.
+
+The student has **one** copy, in `domain/workshop/`. The claim the course actually makes is that the
+newest version of every class still satisfies every earlier specification, and nothing was checking
+it. `regression.php` now does: every solution directory registered newest-first, then each earlier
+lesson's `checks.php` run against the result, one process per lesson. It is step 5 of `verify.php`.
+
+Both additive changes turned out to be genuinely additive. That was luck plus care, and neither is a
+test.
+
+### 3. A version assumption that was too absolute
 
 The first run was on 8.4.22, because Herd's **global** PHP override silently wins over the per-site
 setting. The harness treated that as six failures. In fact only three files were affected — all
@@ -62,13 +82,15 @@ failure count now means what it says.
 Any time something behaves unexpectedly, or after any change to the course:
 
 ```bash
-php verify.php     # is the course sound? runs every reference solution
-php check.php      # environment, integrity, and where you are
+php verify.php      # is the course sound? six steps, including the regression sweep
+php regression.php  # just the regression sweep, when it is what failed
+php check.php       # environment, integrity, and where you are
 ```
 
-`verify.php` runs **all four reference solutions against their own acceptance checks on every
-invocation**. That is the durable defence: a solution that fails its own assertions cannot survive a
-single run.
+`verify.php` runs **every reference solution against its own acceptance checks on every
+invocation**, and then runs **every earlier lesson's spec against the newest version of every
+class**. Between them: a solution that fails its own assertions cannot survive a single run, and a
+lesson that quietly breaks an earlier one cannot either.
 
 The examples are only syntax-checked by `verify.php`, because they print prose rather than
 assertions. To execute all fourteen:
