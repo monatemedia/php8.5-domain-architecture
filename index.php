@@ -448,6 +448,8 @@ $e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 
   footer { padding-block: 2.2rem 3.2rem; color: var(--faint); font-size: 0.84rem; }
   footer a { color: var(--muted); }
+  /* The logo is white on transparent; brightness(0) makes it black for the light page. */
+  .footer-logo img { height: 66px; width: auto; display: block; margin-bottom: 1rem; filter: brightness(0); opacity: 0.55; }
 
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
@@ -752,6 +754,7 @@ Throwable</b></pre>
 
 <footer>
   <div class="wrap">
+    <a class="footer-logo" href="https://www.monatemedia.com/"><img src="logo-wide.png" alt="Monate Media"></a>
     PHP <?= $e($phpVersion) ?> ·
     <a href="https://www.php.net/releases/8.5/en.php">PHP 8.5</a> ·
     <a href="https://www.rfc-editor.org/rfc/rfc9457.html">RFC 9457</a> ·
