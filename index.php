@@ -734,6 +734,22 @@ Throwable</b></pre>
   </div>
 </section>
 
+<section>
+  <div class="wrap">
+    <h2>Then put it to work</h2>
+    <p class="sub">
+      Part three of the series is a real product built by the rules of both courses:
+      <a href="https://slimkiller.monatemedia.com/">Slim Killer</a>, an open-source replacement for
+      WordPress that ships to real clients. Its Rule 7 is this course's Rule 6: ceremony must be
+      paid for. Read its code to see where it pays, and where it deliberately does not.
+    </p>
+    <div class="cta">
+      <a class="btn primary" href="https://slimkiller.monatemedia.com/">Slim Killer</a>
+      <a class="btn" href="https://github.com/monatemedia/slim-killer">Its code on GitHub</a>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     PHP <?= $e($phpVersion) ?> ·
@@ -746,6 +762,7 @@ Throwable</b></pre>
     <a href="<?= $repoUrl ?>">This course on GitHub</a> ·
     Prerequisite: <a href="<?= $prequelUrl ?>">PHP 8.5 OOP Mastery</a><?= $prequelReady ? ' (you have it locally)' : '' ?>,
     completed — not read ·
+    Part three: <a href="https://slimkiller.monatemedia.com/">Slim Killer</a> ·
     MIT licensed
     <br>
     This page is informational only; the course runs entirely from the command line.
